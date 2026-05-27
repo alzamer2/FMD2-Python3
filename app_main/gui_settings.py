@@ -103,7 +103,6 @@ class SettingsView:
                         ],
                         value=general.get('language', 'en'),
                         data='language',
-                        on_change=self._on_setting_change,
                     ),
                     
                     ft.Divider(),
@@ -172,7 +171,6 @@ class SettingsView:
                         ],
                         value=downloads.get('save_format', 'cbz'),
                         data='save_format',
-                        on_change=self._on_setting_change,
                     ),
                     
                     # Download path

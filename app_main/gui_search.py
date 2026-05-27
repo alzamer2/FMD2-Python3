@@ -25,9 +25,10 @@ class SearchView:
         self.site_dropdown = ft.Dropdown(
             label="Select Site",
             width=300,
-            options=[],
-            on_change=self._on_site_change
+            options=[]
         )
+        # Assign event handler after initialization to avoid TypeError
+        self.site_dropdown.on_change = self._on_site_change
         
         # Populate sites from loaded modules
         self._populate_sites()
