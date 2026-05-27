@@ -266,21 +266,26 @@ class FMD2Application:
         # Initialize core components
         self.initialize()
         
-        # Create Flet app
-        app = ft.app(
-            target=self.build_ui,
-            view=ft.AppView.WEB_BROWSER if self.web_mode else ft.AppView.FLET_APP,
-            assets_dir=str(self.base_dir / 'assets'),
-            upload_dir=str(self.base_dir / 'uploads'),
-            web_renderer='canvaskit' if self.web_mode else None,
-        )
-        
         if self.web_mode:
-            # Web mode - start server
+            # Web mode - use ft.app with host/port parameters directly
             print(f"Starting web server at http://{self.host}:{self.port}")
-            app.run(host=self.host, port=self.port)
+            app = ft.app(
+                target=self.build_ui,
+                assets_dir=str(self.base_dir / 'assets'),
+                upload_dir=str(self.base_dir / 'uploads'),
+                web_renderer='canvaskit',
+                host=self.host,
+                port=self.port,
+            )
+            app.run()
         else:
             # Desktop/Mobile mode
+            app = ft.app(
+                target=self.build_ui,
+                view=ft.AppView.FLET_APP if not self.mobile_mode else None,
+                assets_dir=str(self.base_dir / 'assets'),
+                upload_dir=str(self.base_dir / 'uploads'),
+            )
             app.run()
 
 
