@@ -52,10 +52,10 @@ python app.py
 python app.py --web
 ```
 
-With custom host and port:
+With custom IP and port:
 
 ```bash
-python app.py --web --host 0.0.0.0 --port 8080
+python app.py --web --ip 0.0.0.0 --port 8080
 ```
 
 ### Mobile Mode
@@ -84,7 +84,7 @@ python app.py --debug
 |--------|-------------|
 | `--web` | Run in web mode |
 | `--mobile` | Run in mobile mode |
-| `--host`, `-h` | Host address for web mode (default: 0.0.0.0) |
+| `--ip` | IP address for web mode (default: 0.0.0.0) |
 | `--port`, `-p` | Port for web mode (default: 5000) |
 | `--debug` | Enable debug mode |
 | `--lua-dofile` | Always load Lua modules from file (dev mode) |
