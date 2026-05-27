@@ -1,0 +1,192 @@
+----------------------------------------------------------------------------------------------------
+-- Module Initialization
+----------------------------------------------------------------------------------------------------
+
+local _M = {}
+
+----------------------------------------------------------------------------------------------------
+-- Local Constants
+----------------------------------------------------------------------------------------------------
+
+ChapterName = 'Chapter '
+DirectoryPagination = '/api/query?perPage=9999'
+New = false
+
+----------------------------------------------------------------------------------------------------
+-- Event Functions
+----------------------------------------------------------------------------------------------------
+
+-- Sign in to the current website.
+function _M.Login()
+	local u = MODULE.RootURL .. '/auth/signin'
+
+	if MODULE.Account.Enabled == false then return false end
+
+	local s = '[{"email":"' .. MODULE.Account.Username ..
+	'","password":"' .. MODULE.Account.Password .. '"}]'
+	MODULE.Account.Status = asChecking
+
+	if HTTP.POST(u, s) then
+		if (HTTP.ResultCode == 200) and (HTTP.Cookies.Values['auth_session'] ~= '') then
+			MODULE.Account.Status = asValid
+			return true
+		else
+			MODULE.Account.Status = asInvalid
+			return false
+		end
+	else
+		MODULE.Account.Status = asUnknown
+		return false
+	end
+end
+
+-- Get links and names from the manga list of the current website.
+function _M.GetNameAndLink()
+	if API_URL ~= '' then API_URL = API_URL else API_URL = MODULE.RootURL end
+	local u = API_URL .. DirectoryPagination
+
+	if not HTTP.GET(u) then return net_problem end
+
+	for v in CreateTXQuery(HTTP.Document).XPath('json(*).posts()').Get() do
+		if v.GetProperty('isNovel').ToString() ~= 'true' then
+			LINKS.Add('series/' .. v.GetProperty('slug').ToString())
+			NAMES.Add(v.GetProperty('postTitle').ToString())
+		end
+	end
+
+	return no_error
+end
+
+-- Get info and chapter list for the current manga.
+function _M.GetInfo()
+	local u = MaybeFillHost(MODULE.RootURL, URL)
+
+	if not HTTP.GET(u) then return net_problem end
+
+	local s = HTTP.Document.ToString():gsub('\\"', '"'):gsub('\\\\', '\\'):gsub('"%]%)</script><script>self%.__next_f%.push%(%[1,"', '')
+	local x = CreateTXQuery(s)
+
+	local json_root_key
+	if New then
+		local w = '{"series"' .. x.XPathString('//script[contains(., "totalChapterCount")]/substring-before(substring-after(., "{""series"""), "false}]}],")') .. 'false}'
+		if w == '{"series"false}' then w = '{"series"' .. x.XPathString('//script[contains(., "alternativeTitles")]/substring-before(substring-after(., "{""series"""), "]}]")') end
+		x.ParseHTML(w)
+		MANGAINFO.Summary = x.XPathString('json(*).synopsisData.cleanText')
+		json_root_key = 'series'
+	else
+		local summary = x.XPathString('string-join(//div[@itemprop="description"]//p, "\r\n")')
+		local w = '{"post"' .. x.XPathString('//script[contains(., "postId")]/substring-before(substring-after(., "{""post"""), "globalCommentsEnabled"":true}]\\n")') .. 'globalCommentsEnabled":true}'
+		if w == '{"post"globalCommentsEnabled":true}' then w = '{"post"' .. x.XPathString('//script[contains(., "postId")]/substring-before(substring-after(., "{""post"""), "}]]")') .. '}' end
+		x.ParseHTML(w)
+		if summary == '' then summary = x.XPathString('json(*).post.postContent') end
+		MANGAINFO.Summary = summary
+		json_root_key = 'post'
+	end
+
+	local json = x.XPath('json(*).' .. json_root_key)
+	MANGAINFO.Title     = x.XPathString('postTitle', json)
+	MANGAINFO.CoverLink = x.XPathString('featuredImage', json)
+	MANGAINFO.Genres    = x.XPathString('string-join(genres?*/name, ", ")', json)
+	MANGAINFO.Status    = MangaInfoStatusIfPos(x.XPathString('seriesStatus', json), 'COMING_SOON|MASS_RELEASED|ONGOING', 'COMPLETED', 'HIATUS', 'CANCELLED|DROPPED')
+
+	local alttitles = x.XPathString('alternativeTitles', json)
+	MANGAINFO.AltTitles = alttitles ~= 'null' and alttitles
+
+	local authors = x.XPathString('author', json)
+	MANGAINFO.Authors = authors ~= 'null' and authors
+
+	local artists = x.XPathString('artist', json)
+	MANGAINFO.Artists = artists ~= 'null' and artists
+
+	local type = x.XPathString('seriesType', json):gsub("^(%u)(%u*)", function(first, rest) return first .. rest:lower() end)
+	if MANGAINFO.Genres ~= '' then
+		MANGAINFO.Genres = MANGAINFO.Genres .. ', ' .. type
+	else
+		MANGAINFO.Genres = type
+	end
+
+	if not HTTP.GET(API_URL .. '/api/chapters?take=999&order=asc&postId=' .. x.XPathString('id', json)) then return net_problem end
+
+	local slug = x.XPathString('slug', json)
+	local show_paid_chapters = MODULE.GetOption('showpaidchapters')
+
+	for v in CreateTXQuery(HTTP.Document).XPath('json(*).post.chapters()').Get() do
+		local is_accessible = v.GetProperty('isAccessible').ToString() ~= 'false'
+
+		if show_paid_chapters or is_accessible then
+			local title = v.GetProperty('title').ToString()
+			local chapter = v.GetProperty('number').ToString()
+			local chapter_slug = v.GetProperty('slug').ToString()
+			title = (title ~= 'null' and title ~= '-' and title ~= '') and (' - ' .. title) or ''
+
+			MANGAINFO.ChapterLinks.Add('series/' .. slug .. '/' .. chapter_slug)
+			MANGAINFO.ChapterNames.Add(ChapterName .. chapter .. title)
+		end
+	end
+
+	return no_error
+end
+
+-- Get the page count and/or page links for the current chapter.
+function _M.GetPageNumber()
+	local u = MaybeFillHost(MODULE.RootURL, URL)
+
+	if not HTTP.GET(u) then return false end
+
+	local s = HTTP.Document.ToString():gsub('\\"', '"'):gsub('\\\\', '\\'):gsub('"%]%)</script><script>self%.__next_f%.push%(%[1,"', '')
+	local x = CreateTXQuery(s)
+
+	local json
+	if New then
+		local raw = x.XPathString('//script[contains(., "API_Response")]/substring-after(., "API_Response"":")')
+		json = raw:match('^(.-)%}%],%[') or raw:match('^(.-)%}%],"%$')
+	else
+		local extracted = x.XPathString('//script[contains(., "images")]/substring-before(substring-after(., """chapter"""), "],")')
+		json = '{"chapter"' .. extracted .. ']}}'
+	end
+
+	x.ParseHTML(json)
+	local images = {}
+	local has_order = false
+
+	for v in x.XPath('json(*).chapter.images()').Get() do
+		local url = v.GetProperty('url').ToString()
+		local order_prop = v.GetProperty('order')
+
+		local order = nil
+		if order_prop then
+			order = tonumber(order_prop.ToString())
+			if order ~= nil then
+				has_order = true
+			end
+		end
+
+		images[#images + 1] = {
+			url = url,
+			order = order
+		}
+	end
+
+	if has_order then
+		table.sort(images, function(a, b) return a.order < b.order end)
+	end
+
+	for _, img in ipairs(images) do
+		TASK.PageLinks.Add(img.url)
+	end
+
+	return true
+end
+
+-- Prepare the URL, http header and/or http cookies before downloading an image.
+function _M.BeforeDownloadImage()
+	HTTP.Headers.Values['Referer'] = MODULE.RootURL
+
+	return true
+end
+
+----------------------------------------------------------------------------------------------------
+-- Module After-Initialization
+----------------------------------------------------------------------------------------------------
+
+return _M

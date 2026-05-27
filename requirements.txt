@@ -1,0 +1,32 @@
+# FMD2 Python - Free Manga Downloader 2 (Python Port)
+# Core Dependencies
+flet>=0.21.0
+lupa>=2.0
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+Pillow>=10.0.0
+pillow-jxl-plugin>=1.2.0
+cryptography>=41.0.0
+py7zr>=0.20.0
+rarfile>=4.2
+pystray>=0.19.0
+
+# Compression support
+brotli>=1.1.0
+zstandard>=0.21.0
+
+# JavaScript execution
+PyExecJS>=1.5.1
+
+# Image processing
+numpy>=1.24.0
+
+# Utilities
+python-magic>=0.4.27
+chardet>=5.2.0
+
+# Database
+# sqlite3 is built-in
+
+# Optional: For better performance
+# lxml>=4.9.0
