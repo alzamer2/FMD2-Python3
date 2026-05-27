@@ -105,9 +105,9 @@ class LuaHandler:
         if self.http_client:
             lua.globals()['httpsend'] = self.http_client.create_lua_wrapper()
         
-        # Set module paths first
-        utils_path_val = str(self.lua_dir / 'utils')
-        templates_path_val = str(self.lua_dir / 'templates')
+        # Set module paths first - escape backslashes for Windows compatibility
+        utils_path_val = str(self.lua_dir / 'utils').replace('\\', '\\\\')
+        templates_path_val = str(self.lua_dir / 'templates').replace('\\', '\\\\')
         
         # Custom require implementation
         lua.execute(f'''

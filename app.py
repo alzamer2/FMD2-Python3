@@ -24,8 +24,8 @@ def parse_args():
     parser.add_argument('--mobile', action='store_true', help='Run in mobile mode')
     
     # Web server options
-    parser.add_argument('--host', '-h', type=str, default='0.0.0.0', 
-                        help='Host address for web mode (default: 0.0.0.0)')
+    parser.add_argument('--ip', type=str, default='0.0.0.0', 
+                        help='IP address for web mode (default: 0.0.0.0)')
     parser.add_argument('--port', '-p', type=int, default=5000,
                         help='Port for web mode (default: 5000)')
     
@@ -51,7 +51,7 @@ def main():
     app = FMD2Application(
         web_mode=args.web,
         mobile_mode=args.mobile,
-        host=args.host,
+        host=args.ip,
         port=args.port,
         debug=args.debug
     )
