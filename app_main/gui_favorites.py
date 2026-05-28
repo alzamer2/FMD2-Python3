@@ -7,16 +7,21 @@ import flet as ft
 from typing import List, Dict, Optional
 
 
-class FavoritesView:
+class FavoritesView(ft.Column):
     """
     Favorites view showing tracked manga series
     """
     
     def __init__(self, app):
+        super().__init__()
         self.app = app
         self.favorites_list = None
     
-    def build(self) -> ft.Column:
+    def did_mount(self):
+        """Called after the control is mounted into the page tree"""
+        self._refresh_favorites()
+    
+    def build(self) -> 'FavoritesView':
         """Build the favorites UI"""
         # Header with actions
         header_row = ft.Row(
@@ -63,21 +68,30 @@ class FavoritesView:
             padding=10,
         )
         
-        # Load favorites
-        self._refresh_favorites()
+        # Create the main content column - set controls on self since we inherit from Column
+        self.controls = [
+            header_row,
+            ft.Row(controls=[self.filter_dropdown]),
+            self.favorites_list,
+        ]
+        self.expand = True
         
-        return ft.Column(
-            controls=[
-                header_row,
-                ft.Row(controls=[self.filter_dropdown]),
-                self.favorites_list,
-            ],
-            expand=True,
-        )
+        return self
+    
+    def refresh_if_needed(self):
+        """Refresh favorites list - call this after the view is added to page"""
+        self._refresh_favorites()
     
     def _refresh_favorites(self):
         """Refresh favorites list from database"""
         if not self.app or not self.app.db_manager:
+            return
+        
+        # Check if the ListView is added to page
+        try:
+            _ = self.favorites_list.page
+        except RuntimeError:
+            # ListView not yet added to page, skip refresh
             return
         
         self.favorites_list.controls.clear()
@@ -94,8 +108,10 @@ class FavoritesView:
             
             self.favorites_list.controls.append(self._create_favorite_item(fav))
         
-        if self.favorites_list.page:
-            self.favorites_list.page.update()
+        # Update the page if available
+        page = self.page
+        if page:
+            page.update()
     
     def _create_favorite_item(self, favorite: Dict) -> ft.Container:
         """Create a favorite list item"""
@@ -109,7 +125,7 @@ class FavoritesView:
         # Highlight if new chapters available
         bgcolor = None
         if new_count > 0:
-            bgcolor = ft.colors.BLUE_GREY_100
+            bgcolor = ft.Colors.BLUE_GREY_100
         
         return ft.Container(
             content=ft.Row(
@@ -118,7 +134,7 @@ class FavoritesView:
                     ft.Container(
                         width=60,
                         height=80,
-                        bgcolor=ft.colors.GREY_300,
+                        bgcolor=ft.Colors.GREY_300,
                         border_radius=5,
                         content=ft.Icon(ft.Icons.MENU_BOOK, size=40) if not cover_url else None,
                     ),
@@ -127,13 +143,13 @@ class FavoritesView:
                     ft.Column(
                         controls=[
                             ft.Text(title, size=16, weight=ft.FontWeight.BOLD),
-                            ft.Text(site_name, size=12, color=ft.colors.GREY),
+                            ft.Text(site_name, size=12, color=ft.Colors.GREY),
                             ft.Row(
                                 controls=[
                                     ft.Text(f"Last: {last_chapter}", size=12),
                                     ft.Container(
-                                        content=ft.Text(f"+{new_count} new", size=12, color=ft.colors.WHITE),
-                                        bgcolor=ft.colors.GREEN,
+                                        content=ft.Text(f"+{new_count} new", size=12, color=ft.Colors.WHITE),
+                                        bgcolor=ft.Colors.GREEN,
                                         padding=5,
                                         border_radius=10,
                                         visible=new_count > 0,
@@ -220,7 +236,8 @@ class FavoritesView:
     
     def _on_add_favorite(self, e):
         """Open dialog to add new favorite"""
-        if not self.favorites_list.page:
+        page = self.page if hasattr(self, 'page') and self.page else None
+        if not page:
             return
         
         # Create dialog
@@ -246,16 +263,17 @@ class FavoritesView:
             actions_alignment=ft.MainAxisAlignment.END,
         )
         
-        self.favorites_list.page.dialog = dialog
+        page.dialog = dialog
         dialog.open = True
-        self.favorites_list.page.update()
+        page.update()
     
     def _close_dialog(self):
         """Close current dialog"""
-        if self.favorites_list.page and self.favorites_list.page.dialog:
-            self.favorites_list.page.dialog.open = False
-            self.favorites_list.page.dialog = None
-            self.favorites_list.page.update()
+        page = self.page if hasattr(self, 'page') and self.page else None
+        if page and page.dialog:
+            page.dialog.open = False
+            page.dialog = None
+            page.update()
     
     def _add_favorite(self, url: str):
         """Add a favorite from URL"""
@@ -277,12 +295,13 @@ class FavoritesView:
             self._refresh_favorites()
         else:
             # Show error
-            if self.favorites_list.page:
-                self.favorites_list.page.snack_bar = ft.SnackBar(
+            page = self.page if hasattr(self, 'page') and self.page else None
+            if page:
+                page.snack_bar = ft.SnackBar(
                     content=ft.Text("Could not recognize this URL")
                 )
-                self.favorites_list.page.snack_bar.open = True
-                self.favorites_list.page.update()
+                page.snack_bar.open = True
+                page.update()
     
     def _on_download(self, e):
         """Download new chapters for a specific favorite"""

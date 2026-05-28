@@ -1,6 +1,6 @@
 """
 FMD2 Python - Main Navigation View
-Tab-based navigation with Search, Favorites, Downloads, and Settings
+Tab-based navigation with Downloads, Search, Favorites, and Settings
 """
 
 import flet as ft
@@ -9,8 +9,7 @@ from typing import Optional
 
 class MainNavigationView:
     """
-    Main navigation view with rail for desktop/web
-    Bottom navigation bar for mobile
+    Main navigation view with top tabs
     """
     
     def __init__(self, search_view, downloads_view, favorites_view, settings_view):
@@ -21,73 +20,51 @@ class MainNavigationView:
         
         self.current_index = 0
         self.content_area = None
+        self.tab_bar = None  # Store reference to tab bar
     
     def build(self) -> ft.Column:
         """Build the main navigation UI"""
-        # Create content area
+        # Content area that changes based on selected tab
         self.content_area = ft.Container(
+            content=self.downloads_view.build(),
             expand=True,
-            content=self.search_view.build()
         )
         
-        # Create navigation rail for desktop
-        nav_rail = ft.NavigationRail(
+        # Create TabBar with tabs (Flet 0.85+ compatibility)
+        # Note: TabBar must be used within a Tabs control or managed separately
+        # We'll use Tabs control but manage content externally to avoid 'content' arg error
+        self.tabs_control = ft.Tabs(
             selected_index=0,
-            label_type=ft.NavigationRailLabelType.ALL,
-            min_width=100,
-            min_extended_width=400,
-            leading=ft.FloatingActionButton(
-                content=ft.Text("New"),
-                icon=ft.Icons.ADD,
-                on_click=self._on_new_click
-            ),
-            group_alignment=-0.95,
-            destinations=[
-                ft.NavigationRailDestination(
-                    icon=ft.Icons.SEARCH_OUTLINED,
-                    selected_icon=ft.Icons.SEARCH,
-                    label=ft.Text("Search")
-                ),
-                ft.NavigationRailDestination(
-                    icon=ft.Icons.FAVORITE_BORDER,
-                    selected_icon=ft.Icons.FAVORITE,
-                    label=ft.Text("Favorites")
-                ),
-                ft.NavigationRailDestination(
-                    icon=ft.Icons.DOWNLOAD_OUTLINED,
-                    selected_icon=ft.Icons.DOWNLOAD,
-                    label=ft.Text("Downloads")
-                ),
-                ft.NavigationRailDestination(
-                    icon=ft.Icons.SETTINGS_OUTLINED,
-                    selected_icon=ft.Icons.SETTINGS,
-                    label=ft.Text("Settings")
-                ),
+            animation_duration=200,
+            tabs=[
+                ft.Tab(label="Downloads", icon=ft.Icons.DOWNLOAD_OUTLINED),
+                ft.Tab(label="Manga Info", icon=ft.Icons.SEARCH_OUTLINED),
+                ft.Tab(label="Favorites", icon=ft.Icons.FAVORITE_BORDER),
+                ft.Tab(label="Settings", icon=ft.Icons.SETTINGS_OUTLINED),
             ],
+            expand=True,
             on_change=self._on_nav_change,
         )
         
-        # Main layout
-        return ft.Row(
+        return ft.Column(
+            controls=[self.tabs_control, self.content_area],
             expand=True,
-            controls=[
-                nav_rail,
-                ft.VerticalDivider(width=1),
-                self.content_area,
-            ],
+            spacing=0,
         )
     
     def _on_nav_change(self, e):
-        """Handle navigation change"""
+        """Handle navigation tab change"""
         self.current_index = e.control.selected_index
         
-        # Update content based on selection
+        # Update content based on selected tab
         if self.current_index == 0:
-            self.content_area.content = self.search_view.build()
-        elif self.current_index == 1:
-            self.content_area.content = self.favorites_view.build()
-        elif self.current_index == 2:
             self.content_area.content = self.downloads_view.build()
+        elif self.current_index == 1:
+            self.content_area.content = self.search_view.build()
+        elif self.current_index == 2:
+            self.content_area.content = self.favorites_view.build()
+            # Trigger did_mount for favorites when switching to it
+            self.favorites_view.did_mount()
         elif self.current_index == 3:
             self.content_area.content = self.settings_view.build()
         
@@ -95,16 +72,21 @@ class MainNavigationView:
     
     def _on_new_click(self, e):
         """Handle new download/favorite button click"""
-        # Navigate to search and focus on search box
-        e.page.navigation_rail.selected_index = 0
+        # Navigate to manga info (search) tab
+        self.current_index = 1
+        self.tabs_control.selected_index = 1
+        self.tabs_control.update()
         self.search_view.focus_search()
     
     def switch_to_downloads(self):
         """Switch to downloads tab"""
-        self.content_area.content = self.downloads_view.build()
-        self.content_area.update()
+        self.current_index = 0
+        self.tabs_control.selected_index = 0
+        self.tabs_control.update()
     
     def switch_to_favorites(self):
         """Switch to favorites tab"""
-        self.content_area.content = self.favorites_view.build()
-        self.content_area.update()
+        self.current_index = 2
+        self.tabs_control.selected_index = 2
+        self.tabs_control.update()
+        self.favorites_view.did_mount()

@@ -267,26 +267,24 @@ class FMD2Application:
         self.initialize()
         
         if self.web_mode:
-            # Web mode - use ft.app with host/port parameters directly
+            # Web mode - use ft.app with WEB_BROWSER for pure web server accessible via browser
             print(f"Starting web server at http://{self.host}:{self.port}")
-            app = ft.app(
+            ft.app(
                 target=self.build_ui,
                 assets_dir=str(self.base_dir / 'assets'),
                 upload_dir=str(self.base_dir / 'uploads'),
-                web_renderer='canvaskit',
+                view=ft.AppView.WEB_BROWSER,  # Pure web server mode accessible via browser
                 host=self.host,
                 port=self.port,
             )
-            app.run()
         else:
             # Desktop/Mobile mode
-            app = ft.app(
+            ft.app(
                 target=self.build_ui,
-                view=ft.AppView.FLET_APP if not self.mobile_mode else None,
+                view=ft.AppView.FLET_APP if not self.mobile_mode else ft.AppView.WEB_BROWSER,
                 assets_dir=str(self.base_dir / 'assets'),
                 upload_dir=str(self.base_dir / 'uploads'),
             )
-            app.run()
 
 
 def main():
