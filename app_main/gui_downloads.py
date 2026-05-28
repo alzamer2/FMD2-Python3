@@ -1,28 +1,37 @@
 """
 FMD2 Python - Downloads View
 Shows active downloads with progress bars and controls
+Includes filter panel for status and history filtering
 """
 
 import flet as ft
 from typing import List, Dict, Optional
+from datetime import datetime, timedelta
 
 
 class DownloadsView(ft.Column):
     """
     Downloads view showing active and completed downloads
+    With filter panel for status and history
     """
     
     def __init__(self, app):
         super().__init__()
         self.app = app
         self.downloads_list = None
+        self.filter_panel = None
+        self.current_status_filter = "all"
+        self.current_history_filter = "all"
     
     def did_mount(self):
         """Called after the control is mounted into the page tree"""
         self._refresh_downloads()
     
     def build(self) -> 'DownloadsView':
-        """Build the downloads UI"""
+        """Build the downloads UI with filter panel"""
+        # Create filter panel
+        self.filter_panel = self._build_filter_panel()
+        
         # Header with stats
         self.stats_row = ft.Row(
             controls=[
@@ -41,14 +50,124 @@ class DownloadsView(ft.Column):
             padding=10,
         )
         
+        # Main content area (filter panel + downloads)
+        main_content = ft.Row(
+            expand=True,
+            controls=[
+                self.filter_panel,
+                ft.VerticalDivider(width=1),
+                ft.Column(
+                    expand=True,
+                    controls=[
+                        self.stats_row,
+                        self.downloads_list,
+                    ],
+                    spacing=0,
+                ),
+            ],
+            spacing=0,
+        )
+        
         # Create the main content column - set controls on self since we inherit from Column
-        self.controls = [
-            self.stats_row,
-            self.downloads_list,
-        ]
+        self.controls = [main_content]
         self.expand = True
         
         return self
+    
+    def _build_filter_panel(self) -> ft.Container:
+        """Build the filter panel with status and history filters"""
+        # Status filter group
+        status_filter = ft.Column(
+            controls=[
+                ft.Text("Status", size=14, weight=ft.FontWeight.BOLD),
+                ft.RadioGroup(
+                    ft.Column(
+                        controls=[
+                            ft.Radio(value="all", label="All"),
+                            ft.Radio(value="completed", label="Completed"),
+                            ft.Radio(value="in_progress", label="In Progress"),
+                            ft.Radio(value="stopped", label="Stopped"),
+                            ft.Radio(value="failed", label="Failed"),
+                            ft.Radio(value="disabled", label="Disabled"),
+                        ],
+                        spacing=5,
+                    ),
+                    value="all",
+                    on_change=self._on_status_filter_change,
+                ),
+            ],
+            spacing=10,
+        )
+        
+        # History filter group
+        history_filter = ft.Column(
+            controls=[
+                ft.Text("History", size=14, weight=ft.FontWeight.BOLD),
+                ft.RadioGroup(
+                    ft.Column(
+                        controls=[
+                            ft.Radio(value="all", label="All"),
+                            ft.Radio(value="today", label="Today"),
+                            ft.Radio(value="yesterday", label="Yesterday"),
+                            ft.Radio(value="last_week", label="Last Week"),
+                            ft.Radio(value="this_month", label="This Month"),
+                            ft.Radio(value="last_6_months", label="Last 6 Months"),
+                            ft.Radio(value="older", label="Older than 6 Months"),
+                            ft.Radio(value="custom", label="Custom"),
+                        ],
+                        spacing=5,
+                    ),
+                    value="all",
+                    on_change=self._on_history_filter_change,
+                ),
+            ],
+            spacing=10,
+        )
+        
+        # Custom date range (hidden by default)
+        self.custom_date_range = ft.Column(
+            controls=[
+                ft.TextField(label="From", hint_text="YYYY-MM-DD", width=150),
+                ft.TextField(label="To", hint_text="YYYY-MM-DD", width=150),
+                ft.TextButton("Apply", on_click=self._apply_custom_date_range),
+            ],
+            spacing=5,
+            visible=False,
+        )
+        
+        return ft.Container(
+            width=200,
+            padding=10,
+            content=ft.Column(
+                controls=[
+                    status_filter,
+                    ft.Divider(),
+                    history_filter,
+                    self.custom_date_range,
+                ],
+                spacing=15,
+            ),
+        )
+    
+    def _on_status_filter_change(self, e):
+        """Handle status filter change"""
+        self.current_status_filter = e.control.value
+        self._refresh_downloads()
+    
+    def _on_history_filter_change(self, e):
+        """Handle history filter change"""
+        self.current_history_filter = e.control.value
+        
+        # Show/hide custom date range
+        if self.custom_date_range:
+            self.custom_date_range.visible = (self.current_history_filter == "custom")
+            self.custom_date_range.update()
+        
+        self._refresh_downloads()
+    
+    def _apply_custom_date_range(self, e):
+        """Apply custom date range filter"""
+        self._refresh_downloads()
     
     def _refresh_downloads(self):
         """Refresh downloads list from database"""
