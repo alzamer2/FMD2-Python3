@@ -316,7 +316,7 @@ class SettingsView:
                     ft.Text(
                         "Version: 2.0.0 (Python)",
                         size=12,
-                        color=ft.colors.GREY,
+                        color=ft.Colors.GREY,
                     ),
                 ],
                 spacing=15,

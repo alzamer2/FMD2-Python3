@@ -95,7 +95,7 @@ class DownloadsView(ft.Column):
                 ft.Divider(height=30, thickness=1)
             )
             self.downloads_list.controls.append(
-                ft.Text("Failed", size=16, weight=ft.FontWeight.BOLD, color=ft.colors.RED)
+                ft.Text("Failed", size=16, weight=ft.FontWeight.BOLD, color=ft.Colors.RED)
             )
             for item in failed[:5]:  # Show last 5
                 self.downloads_list.controls.append(self._create_download_item(item, is_failed=True))
@@ -116,13 +116,13 @@ class DownloadsView(ft.Column):
         
         # Status color
         if is_completed:
-            status_color = ft.colors.GREEN
+            status_color = ft.Colors.GREEN
             status_icon = ft.Icons.CHECK_CIRCLE
         elif is_failed:
-            status_color = ft.colors.RED
+            status_color = ft.Colors.RED
             status_icon = ft.Icons.ERROR
         else:
-            status_color = ft.colors.BLUE
+            status_color = ft.Colors.BLUE
             status_icon = ft.Icons.DOWNLOADING
         
         # Progress bar
@@ -196,7 +196,7 @@ class DownloadsView(ft.Column):
                     ft.Column(
                         controls=[
                             ft.Text(manga_title, size=14, weight=ft.FontWeight.BOLD),
-                            ft.Text(chapter_name, size=12, color=ft.colors.GREY),
+                            ft.Text(chapter_name, size=12, color=ft.Colors.GREY),
                             ft.Row(
                                 controls=[
                                     progress_bar,
@@ -214,7 +214,7 @@ class DownloadsView(ft.Column):
                 spacing=10,
             ),
             padding=10,
-            bgcolor=ft.colors.SURFACE_VARIANT,
+            bgcolor=ft.Colors.SURFACE_VARIANT,
             border_radius=5,
         )
     

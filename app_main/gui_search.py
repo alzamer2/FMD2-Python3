@@ -230,7 +230,7 @@ class SearchView:
                 error_content=ft.Container(
                     width=150,
                     height=200,
-                    bgcolor=ft.colors.GREY_300,
+                    bgcolor=ft.Colors.GREY_300,
                     content=ft.Icon(ft.Icons.IMAGE_NOT_SUPPORTED, size=50)
                 )
             )
@@ -238,7 +238,7 @@ class SearchView:
             cover_image = ft.Container(
                 width=150,
                 height=200,
-                bgcolor=ft.colors.GREY_300,
+                bgcolor=ft.Colors.GREY_300,
                 content=ft.Column(
                     controls=[
                         ft.Icon(ft.Icons.MENU_BOOK, size=50),
@@ -255,7 +255,7 @@ class SearchView:
                     controls=[
                         cover_image,
                         ft.Text(title, size=14, weight=ft.FontWeight.BOLD, max_lines=2, overflow=ft.TextOverflow.ELLIPSIS),
-                        ft.Text(author, size=12, color=ft.colors.GREY, max_lines=1, overflow=ft.TextOverflow.ELLIPSIS),
+                        ft.Text(author, size=12, color=ft.Colors.GREY, max_lines=1, overflow=ft.TextOverflow.ELLIPSIS),
                         ft.Row(
                             controls=[
                                 ft.TextButton("Info", icon=ft.Icons.INFO_OUTLINE),

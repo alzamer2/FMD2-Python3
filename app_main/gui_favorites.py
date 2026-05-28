@@ -125,7 +125,7 @@ class FavoritesView(ft.Column):
         # Highlight if new chapters available
         bgcolor = None
         if new_count > 0:
-            bgcolor = ft.colors.BLUE_GREY_100
+            bgcolor = ft.Colors.BLUE_GREY_100
         
         return ft.Container(
             content=ft.Row(
@@ -134,7 +134,7 @@ class FavoritesView(ft.Column):
                     ft.Container(
                         width=60,
                         height=80,
-                        bgcolor=ft.colors.GREY_300,
+                        bgcolor=ft.Colors.GREY_300,
                         border_radius=5,
                         content=ft.Icon(ft.Icons.MENU_BOOK, size=40) if not cover_url else None,
                     ),
@@ -143,13 +143,13 @@ class FavoritesView(ft.Column):
                     ft.Column(
                         controls=[
                             ft.Text(title, size=16, weight=ft.FontWeight.BOLD),
-                            ft.Text(site_name, size=12, color=ft.colors.GREY),
+                            ft.Text(site_name, size=12, color=ft.Colors.GREY),
                             ft.Row(
                                 controls=[
                                     ft.Text(f"Last: {last_chapter}", size=12),
                                     ft.Container(
-                                        content=ft.Text(f"+{new_count} new", size=12, color=ft.colors.WHITE),
-                                        bgcolor=ft.colors.GREEN,
+                                        content=ft.Text(f"+{new_count} new", size=12, color=ft.Colors.WHITE),
+                                        bgcolor=ft.Colors.GREEN,
                                         padding=5,
                                         border_radius=10,
                                         visible=new_count > 0,
