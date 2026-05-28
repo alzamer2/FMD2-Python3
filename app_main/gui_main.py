@@ -37,8 +37,8 @@ class MainNavigationView:
             min_width=100,
             min_extended_width=400,
             leading=ft.FloatingActionButton(
-                icon=ft.Icons.ADD, 
-                label=ft.Text("New"),
+                content=ft.Text("New"),
+                icon=ft.Icons.ADD,
                 on_click=self._on_new_click
             ),
             group_alignment=-0.95,
