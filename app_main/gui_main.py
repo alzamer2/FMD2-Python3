@@ -38,22 +38,18 @@ class MainNavigationView:
                 ft.Tab(
                     label="Downloads",
                     icon=ft.Icons.DOWNLOAD_OUTLINED,
-                    selected_icon=ft.Icons.DOWNLOAD,
                 ),
                 ft.Tab(
                     label="Manga Info",
                     icon=ft.Icons.SEARCH_OUTLINED,
-                    selected_icon=ft.Icons.SEARCH,
                 ),
                 ft.Tab(
                     label="Favorites",
                     icon=ft.Icons.FAVORITE_BORDER,
-                    selected_icon=ft.Icons.FAVORITE,
                 ),
                 ft.Tab(
                     label="Settings",
                     icon=ft.Icons.SETTINGS_OUTLINED,
-                    selected_icon=ft.Icons.SETTINGS,
                 ),
             ],
             on_change=self._on_nav_change,
