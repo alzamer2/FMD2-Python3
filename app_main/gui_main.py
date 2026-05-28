@@ -30,15 +30,17 @@ class MainNavigationView:
             expand=True,
         )
         
-        # Create tabs WITHOUT content (Flet 0.85+ compatibility)
+        # Create TabBar with tabs (Flet 0.85+ compatibility)
+        # Note: TabBar must be used within a Tabs control or managed separately
+        # We'll use Tabs control but manage content externally to avoid 'content' arg error
         self.tabs_control = ft.Tabs(
             selected_index=0,
             animation_duration=200,
             tabs=[
-                ft.Tab(text="Downloads", icon=ft.Icons.DOWNLOAD_OUTLINED),
-                ft.Tab(text="Manga Info", icon=ft.Icons.SEARCH_OUTLINED),
-                ft.Tab(text="Favorites", icon=ft.Icons.FAVORITE_BORDER),
-                ft.Tab(text="Settings", icon=ft.Icons.SETTINGS_OUTLINED),
+                ft.Tab(label="Downloads", icon=ft.Icons.DOWNLOAD_OUTLINED),
+                ft.Tab(label="Manga Info", icon=ft.Icons.SEARCH_OUTLINED),
+                ft.Tab(label="Favorites", icon=ft.Icons.FAVORITE_BORDER),
+                ft.Tab(label="Settings", icon=ft.Icons.SETTINGS_OUTLINED),
             ],
             expand=True,
             on_change=self._on_nav_change,
