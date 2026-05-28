@@ -53,7 +53,7 @@ class MainNavigationView:
         # Create TabBar for top navigation
         self.tab_bar = ft.TabBar(
             tabs=self.tab_definitions,
-            on_change=self._on_nav_change,
+            on_tab_change=self._on_nav_change,
         )
         
         # Main layout
