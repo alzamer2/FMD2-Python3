@@ -24,72 +24,67 @@ class MainNavigationView:
     
     def build(self) -> ft.Column:
         """Build the main navigation UI"""
-        # Create content area first (will be updated when tabs change)
-        self.content_area = ft.Container(
-            expand=True,
-            content=self.downloads_view.build()
-        )
-        
-        # Create TabBar with tabs - TabBar handles the tab buttons
-        self.tab_bar = ft.TabBar(
+        # Create tabs with content directly
+        self.tabs_control = ft.Tabs(
+            selected_index=0,
+            animation_duration=200,
             tabs=[
-                ft.Tab(label="Downloads", icon=ft.Icons.DOWNLOAD_OUTLINED),
-                ft.Tab(label="Manga Info", icon=ft.Icons.SEARCH_OUTLINED),
-                ft.Tab(label="Favorites", icon=ft.Icons.FAVORITE_BORDER),
-                ft.Tab(label="Settings", icon=ft.Icons.SETTINGS_OUTLINED),
+                ft.Tab(
+                    label="Downloads",
+                    icon=ft.Icons.DOWNLOAD_OUTLINED,
+                    content=self.downloads_view.build(),
+                ),
+                ft.Tab(
+                    label="Manga Info",
+                    icon=ft.Icons.SEARCH_OUTLINED,
+                    content=self.search_view.build(),
+                ),
+                ft.Tab(
+                    label="Favorites",
+                    icon=ft.Icons.FAVORITE_BORDER,
+                    content=self.favorites_view.build(),
+                ),
+                ft.Tab(
+                    label="Settings",
+                    icon=ft.Icons.SETTINGS_OUTLINED,
+                    content=self.settings_view.build(),
+                ),
             ],
-            on_click=self._on_nav_click,
+            expand=True,
+            on_change=self._on_nav_change,
         )
-        self.tab_bar.selected_index = 0
         
         return ft.Column(
-            controls=[
-                self.tab_bar,
-                self.content_area,
-            ],
+            controls=[self.tabs_control],
             expand=True,
             spacing=0,
         )
     
-    def _on_nav_click(self, e):
-        """Handle navigation tab click"""
-        # Get the clicked tab index by finding it in the tabs list
-        clicked_tab = e.control
-        self.current_index = clicked_tab.selected_index
+    def _on_nav_change(self, e):
+        """Handle navigation tab change"""
+        self.current_index = e.control.selected_index
         
-        # Update content based on selected index
-        if self.current_index == 0:
-            self.content_area.content = self.downloads_view.build()
-        elif self.current_index == 1:
-            self.content_area.content = self.search_view.build()
-        elif self.current_index == 2:
-            self.content_area.content = self.favorites_view.build()
+        # Trigger did_mount for favorites when switching to it
+        if self.current_index == 2:
             self.favorites_view.did_mount()
-        elif self.current_index == 3:
-            self.content_area.content = self.settings_view.build()
-        
-        self.content_area.update()
     
     def _on_new_click(self, e):
         """Handle new download/favorite button click"""
         # Navigate to manga info (search) tab
         self.current_index = 1
-        self.tab_bar.selected_index = 1
-        self.content_area.content = self.search_view.build()
-        self.content_area.update()
+        self.tabs_control.selected_index = 1
+        self.tabs_control.update()
         self.search_view.focus_search()
     
     def switch_to_downloads(self):
         """Switch to downloads tab"""
         self.current_index = 0
-        self.tab_bar.selected_index = 0
-        self.content_area.content = self.downloads_view.build()
-        self.content_area.update()
+        self.tabs_control.selected_index = 0
+        self.tabs_control.update()
     
     def switch_to_favorites(self):
         """Switch to favorites tab"""
         self.current_index = 2
-        self.tab_bar.selected_index = 2
-        self.content_area.content = self.favorites_view.build()
+        self.tabs_control.selected_index = 2
+        self.tabs_control.update()
         self.favorites_view.did_mount()
-        self.content_area.update()
