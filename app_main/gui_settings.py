@@ -97,7 +97,7 @@ class SettingsView:
                         label="One instance only",
                         value=general.get('one_instance_only', True),
                         data='one_instance_only',
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     # Check for updates
@@ -105,7 +105,7 @@ class SettingsView:
                         label="Check for updates on startup",
                         value=general.get('check_updates', True),
                         data='check_updates',
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     # Auto check favorites on startup
@@ -113,7 +113,7 @@ class SettingsView:
                         label="Auto-check favorites on startup",
                         value=general.get('auto_check_fav_startup', True),
                         data='auto_check_fav_startup',
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     # Auto check favorites interval
@@ -123,7 +123,7 @@ class SettingsView:
                                 label="Auto-check favorites interval",
                                 value=general.get('auto_check_fav_interval', False),
                                 data='auto_check_fav_interval',
-                                on_change=self._on_setting_change,
+                                on_select=self._on_setting_change,
                             ),
                             ft.TextField(
                                 label="Interval (minutes)",
@@ -131,7 +131,7 @@ class SettingsView:
                                 data='auto_check_fav_interval_minutes',
                                 keyboard_type=ft.KeyboardType.NUMBER,
                                 width=120,
-                                on_change=self._on_setting_change,
+                                on_select=self._on_setting_change,
                             ),
                         ]
                     ),
@@ -171,7 +171,7 @@ class SettingsView:
                         ],
                         value=general.get('after_download_action', 'nothing'),
                         data='after_download_action',
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     # Delete completed tasks on close
@@ -179,7 +179,7 @@ class SettingsView:
                         label="Delete completed tasks on close",
                         value=general.get('delete_completed_tasks_on_close', False),
                         data='delete_completed_tasks_on_close',
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     # Sort downloads on new tasks
@@ -187,7 +187,7 @@ class SettingsView:
                         label="Sort downloads when adding new tasks",
                         value=general.get('sort_downloads_on_new_tasks', False),
                         data='sort_downloads_on_new_tasks',
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     ft.Divider(),
@@ -231,7 +231,7 @@ class SettingsView:
                         data='max_parallel',
                         keyboard_type=ft.KeyboardType.NUMBER,
                         width=200,
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                         helper_text="Number of simultaneous manga downloads",
                     ),
                     
@@ -242,7 +242,7 @@ class SettingsView:
                         data='max_threads',
                         keyboard_type=ft.KeyboardType.NUMBER,
                         width=200,
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                         helper_text="Threads for each manga download",
                     ),
                     
@@ -253,7 +253,7 @@ class SettingsView:
                         data='max_retry',
                         keyboard_type=ft.KeyboardType.NUMBER,
                         width=200,
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     # Retry failed tasks
@@ -263,7 +263,7 @@ class SettingsView:
                         data='retry_failed_task',
                         keyboard_type=ft.KeyboardType.NUMBER,
                         width=200,
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     # Always start from failed chapters
@@ -271,7 +271,7 @@ class SettingsView:
                         label="Always start from failed chapters",
                         value=downloads.get('always_start_from_failed', True),
                         data='always_start_from_failed',
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     ft.Divider(),
@@ -289,7 +289,7 @@ class SettingsView:
                         ],
                         value=downloads.get('save_format', 'cbz'),
                         data='save_format',
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     # PDF Quality
@@ -301,7 +301,7 @@ class SettingsView:
                         value=downloads.get('pdf_quality', 95),
                         data='pdf_quality',
                         width=300,
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     ft.Divider(),
@@ -311,7 +311,7 @@ class SettingsView:
                         label="Generate manga folder",
                         value=downloads.get('generate_manga_folder', False),
                         data='generate_manga_folder',
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     ft.TextField(
@@ -319,7 +319,7 @@ class SettingsView:
                         value=downloads.get('manga_custom_rename', '%MANGA%'),
                         data='manga_custom_rename',
                         expand=True,
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                         helper_text="Use %MANGA% for manga name",
                     ),
                     
@@ -327,7 +327,7 @@ class SettingsView:
                         label="Generate chapter folder",
                         value=downloads.get('generate_chapter_folder', True),
                         data='generate_chapter_folder',
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     ft.TextField(
@@ -335,7 +335,7 @@ class SettingsView:
                         value=downloads.get('chapter_custom_rename', '%CHAPTER%'),
                         data='chapter_custom_rename',
                         expand=True,
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                         helper_text="Use %CHAPTER% for chapter name",
                     ),
                     
@@ -344,7 +344,7 @@ class SettingsView:
                         value=downloads.get('filename_custom_rename', '%FILENAME%'),
                         data='filename_custom_rename',
                         expand=True,
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                         helper_text="Use %FILENAME% for image filename",
                     ),
                     
@@ -357,7 +357,7 @@ class SettingsView:
                                 label="Convert volume to digits",
                                 value=downloads.get('convert_digit_volume', False),
                                 data='convert_digit_volume',
-                                on_change=self._on_setting_change,
+                                on_select=self._on_setting_change,
                             ),
                             ft.TextField(
                                 label="Volume digit length",
@@ -365,7 +365,7 @@ class SettingsView:
                                 data='convert_digit_volume_length',
                                 keyboard_type=ft.KeyboardType.NUMBER,
                                 width=100,
-                                on_change=self._on_setting_change,
+                                on_select=self._on_setting_change,
                             ),
                         ]
                     ),
@@ -376,7 +376,7 @@ class SettingsView:
                                 label="Convert chapter to digits",
                                 value=downloads.get('convert_digit_chapter', False),
                                 data='convert_digit_chapter',
-                                on_change=self._on_setting_change,
+                                on_select=self._on_setting_change,
                             ),
                             ft.TextField(
                                 label="Chapter digit length",
@@ -384,7 +384,7 @@ class SettingsView:
                                 data='convert_digit_chapter_length',
                                 keyboard_type=ft.KeyboardType.NUMBER,
                                 width=100,
-                                on_change=self._on_setting_change,
+                                on_select=self._on_setting_change,
                             ),
                         ]
                     ),
@@ -396,7 +396,7 @@ class SettingsView:
                         label="Convert PNG to JPEG",
                         value=downloads.get('png_save_as_jpeg', False),
                         data='png_save_as_jpeg',
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     ft.Dropdown(
@@ -409,7 +409,7 @@ class SettingsView:
                         ],
                         value=str(downloads.get('webp_save_as', 1)),
                         data='webp_save_as',
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     ft.TextField(
@@ -418,7 +418,7 @@ class SettingsView:
                         data='png_compression_level',
                         keyboard_type=ft.KeyboardType.NUMBER,
                         width=150,
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     ft.TextField(
@@ -427,7 +427,7 @@ class SettingsView:
                         data='jpeg_quality',
                         keyboard_type=ft.KeyboardType.NUMBER,
                         width=150,
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     ft.Divider(),
@@ -438,7 +438,7 @@ class SettingsView:
                         value=downloads.get('download_path', ''),
                         data='download_path',
                         expand=True,
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                         suffix=ft.IconButton(
                             icon=ft.Icons.FOLDER_OPEN,
                             on_click=self._on_browse_folder,
@@ -468,7 +468,7 @@ class SettingsView:
                         data='connection_timeout',
                         keyboard_type=ft.KeyboardType.NUMBER,
                         width=200,
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     # Max favorite threads
@@ -478,7 +478,7 @@ class SettingsView:
                         data='max_favorite_threads',
                         keyboard_type=ft.KeyboardType.NUMBER,
                         width=200,
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     # Max update list threads
@@ -488,7 +488,7 @@ class SettingsView:
                         data='max_update_list_threads',
                         keyboard_type=ft.KeyboardType.NUMBER,
                         width=200,
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     # Max background load threads
@@ -498,7 +498,7 @@ class SettingsView:
                         data='max_background_load_threads',
                         keyboard_type=ft.KeyboardType.NUMBER,
                         width=200,
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     ft.Divider(),
@@ -508,7 +508,7 @@ class SettingsView:
                         label="Use GZip compression",
                         value=network.get('use_gzip', True),
                         data='use_gzip',
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     # Cloudflare bypass
@@ -516,7 +516,7 @@ class SettingsView:
                         label="Enable Cloudflare bypass",
                         value=network.get('enable_cloudflare_bypass', True),
                         data='enable_cloudflare_bypass',
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     # Auto disable cloudflare bypass
@@ -524,7 +524,7 @@ class SettingsView:
                         label="Auto-disable Cloudflare bypass on failure",
                         value=network.get('auto_disable_cloudflare_bypass', False),
                         data='auto_disable_cloudflare_bypass',
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     ft.Divider(),
@@ -536,7 +536,7 @@ class SettingsView:
                         value=network.get('proxy', ''),
                         data='proxy',
                         expand=True,
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     ft.Divider(),
@@ -575,7 +575,7 @@ class SettingsView:
                         ),
                         value=gui.get('theme', 'system'),
                         data='theme',
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     # Compact mode
@@ -583,7 +583,7 @@ class SettingsView:
                         label="Compact Mode",
                         value=gui.get('compact_mode', False),
                         data='compact_mode',
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     ft.Divider(),
@@ -593,7 +593,7 @@ class SettingsView:
                         label="Show notification balloons",
                         value=gui.get('show_balloon_hint', True),
                         data='show_balloon_hint',
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     # Show favorites tab on new manga
@@ -601,7 +601,7 @@ class SettingsView:
                         label="Switch to favorites tab when new chapters found",
                         value=gui.get('show_favorites_tab_on_new_manga', False),
                         data='show_favorites_tab_on_new_manga',
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     # Show downloads tab on new tasks
@@ -609,7 +609,7 @@ class SettingsView:
                         label="Switch to downloads tab on new tasks",
                         value=gui.get('show_downloads_tab_on_new_tasks', True),
                         data='show_downloads_tab_on_new_tasks',
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     # Enable load cover
@@ -617,7 +617,7 @@ class SettingsView:
                         label="Load and display cover images",
                         value=gui.get('enable_load_cover', False),
                         data='enable_load_cover',
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     ft.Divider(),
