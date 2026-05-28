@@ -20,7 +20,7 @@ class MainNavigationView:
         
         self.current_index = 0
         self.content_area = None
-        self.tabs_control = None  # Store reference to tabs control
+        self.tab_bar = None  # Store reference to tab bar
     
     def build(self) -> ft.Column:
         """Build the main navigation UI"""
@@ -30,33 +30,32 @@ class MainNavigationView:
             content=self.downloads_view.build()
         )
         
-        # Create TabBar with separate content area
-        # Note: In Flet 0.85.2, TabBar must be used within Tabs control
-        # So we use Tabs with empty content and manage content separately
-        self.tabs_control = ft.Tabs(
-            selected_index=0,
+        # Create TabBar with tabs - TabBar handles the tab buttons
+        self.tab_bar = ft.TabBar(
             tabs=[
-                ft.Tab(text="Downloads", icon=ft.Icons.DOWNLOAD_OUTLINED),
-                ft.Tab(text="Manga Info", icon=ft.Icons.SEARCH_OUTLINED),
-                ft.Tab(text="Favorites", icon=ft.Icons.FAVORITE_BORDER),
-                ft.Tab(text="Settings", icon=ft.Icons.SETTINGS_OUTLINED),
+                ft.Tab(label="Downloads", icon=ft.Icons.DOWNLOAD_OUTLINED),
+                ft.Tab(label="Manga Info", icon=ft.Icons.SEARCH_OUTLINED),
+                ft.Tab(label="Favorites", icon=ft.Icons.FAVORITE_BORDER),
+                ft.Tab(label="Settings", icon=ft.Icons.SETTINGS_OUTLINED),
             ],
-            expand=True,
-            on_change=self._on_nav_change,
+            on_click=self._on_nav_click,
         )
+        self.tab_bar.selected_index = 0
         
         return ft.Column(
             controls=[
-                self.tabs_control,
+                self.tab_bar,
                 self.content_area,
             ],
             expand=True,
             spacing=0,
         )
     
-    def _on_nav_change(self, e):
-        """Handle navigation tab change"""
-        self.current_index = e.control.selected_index
+    def _on_nav_click(self, e):
+        """Handle navigation tab click"""
+        # Get the clicked tab index by finding it in the tabs list
+        clicked_tab = e.control
+        self.current_index = clicked_tab.selected_index
         
         # Update content based on selected index
         if self.current_index == 0:
@@ -75,7 +74,7 @@ class MainNavigationView:
         """Handle new download/favorite button click"""
         # Navigate to manga info (search) tab
         self.current_index = 1
-        self.tabs_control.selected_index = 1
+        self.tab_bar.selected_index = 1
         self.content_area.content = self.search_view.build()
         self.content_area.update()
         self.search_view.focus_search()
@@ -83,14 +82,14 @@ class MainNavigationView:
     def switch_to_downloads(self):
         """Switch to downloads tab"""
         self.current_index = 0
-        self.tabs_control.selected_index = 0
+        self.tab_bar.selected_index = 0
         self.content_area.content = self.downloads_view.build()
         self.content_area.update()
     
     def switch_to_favorites(self):
         """Switch to favorites tab"""
         self.current_index = 2
-        self.tabs_control.selected_index = 2
+        self.tab_bar.selected_index = 2
         self.content_area.content = self.favorites_view.build()
         self.favorites_view.did_mount()
         self.content_area.update()

@@ -1,1 +1,23 @@
-Nothing should be ignored based on the provided file changes. The only modified file is 'app_main/gui_main.py', which is a source code file and should not be added to .gitignore. No build artifacts, dependencies, or temporary files are present in the changes.
+```
+# Compiled Python files
+*.pyc
+__pycache__/
+
+# Dependencies
+.venv/
+venv/
+node_modules/
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+
+# Environment
+.env
+.env.*
+
+# Editors
+.vscode/
+.idea/
+```
