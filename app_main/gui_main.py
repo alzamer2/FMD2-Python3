@@ -24,38 +24,28 @@ class MainNavigationView:
     
     def build(self) -> ft.Column:
         """Build the main navigation UI"""
-        # Create tabs with content directly
+        # Content area that changes based on selected tab
+        self.content_area = ft.Container(
+            content=self.downloads_view.build(),
+            expand=True,
+        )
+        
+        # Create tabs WITHOUT content (Flet 0.85+ compatibility)
         self.tabs_control = ft.Tabs(
             selected_index=0,
             animation_duration=200,
             tabs=[
-                ft.Tab(
-                    label="Downloads",
-                    icon=ft.Icons.DOWNLOAD_OUTLINED,
-                    content=self.downloads_view.build(),
-                ),
-                ft.Tab(
-                    label="Manga Info",
-                    icon=ft.Icons.SEARCH_OUTLINED,
-                    content=self.search_view.build(),
-                ),
-                ft.Tab(
-                    label="Favorites",
-                    icon=ft.Icons.FAVORITE_BORDER,
-                    content=self.favorites_view.build(),
-                ),
-                ft.Tab(
-                    label="Settings",
-                    icon=ft.Icons.SETTINGS_OUTLINED,
-                    content=self.settings_view.build(),
-                ),
+                ft.Tab(text="Downloads", icon=ft.Icons.DOWNLOAD_OUTLINED),
+                ft.Tab(text="Manga Info", icon=ft.Icons.SEARCH_OUTLINED),
+                ft.Tab(text="Favorites", icon=ft.Icons.FAVORITE_BORDER),
+                ft.Tab(text="Settings", icon=ft.Icons.SETTINGS_OUTLINED),
             ],
             expand=True,
             on_change=self._on_nav_change,
         )
         
         return ft.Column(
-            controls=[self.tabs_control],
+            controls=[self.tabs_control, self.content_area],
             expand=True,
             spacing=0,
         )
@@ -64,9 +54,19 @@ class MainNavigationView:
         """Handle navigation tab change"""
         self.current_index = e.control.selected_index
         
-        # Trigger did_mount for favorites when switching to it
-        if self.current_index == 2:
+        # Update content based on selected tab
+        if self.current_index == 0:
+            self.content_area.content = self.downloads_view.build()
+        elif self.current_index == 1:
+            self.content_area.content = self.search_view.build()
+        elif self.current_index == 2:
+            self.content_area.content = self.favorites_view.build()
+            # Trigger did_mount for favorites when switching to it
             self.favorites_view.did_mount()
+        elif self.current_index == 3:
+            self.content_area.content = self.settings_view.build()
+        
+        self.content_area.update()
     
     def _on_new_click(self, e):
         """Handle new download/favorite button click"""
