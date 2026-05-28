@@ -53,7 +53,7 @@ class MainNavigationView:
         # Create TabBar for top navigation
         self.tab_bar = ft.TabBar(
             tabs=self.tab_definitions,
-            on_tab_change=self._on_nav_change,
+            on_click=self._on_nav_change,
         )
         
         # Main layout
@@ -68,7 +68,8 @@ class MainNavigationView:
     
     def _on_nav_change(self, e):
         """Handle navigation change"""
-        self.current_index = e.control.selected_index
+        # Get the selected index from the clicked tab
+        self.current_index = self.tab_definitions.index(e.control)
         
         # Update content based on selection
         if self.current_index == 0:
