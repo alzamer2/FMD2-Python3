@@ -63,17 +63,25 @@ class FavoritesView:
             padding=10,
         )
         
-        # Load favorites
-        self._refresh_favorites()
-        
-        return ft.Column(
-            controls=[
-                header_row,
-                ft.Row(controls=[self.filter_dropdown]),
-                self.favorites_list,
-            ],
+        # Create a container that will hold the favorites view and handle did_mount
+        self.container = ft.Container(
             expand=True,
+            content=ft.Column(
+                controls=[
+                    header_row,
+                    ft.Row(controls=[self.filter_dropdown]),
+                    self.favorites_list,
+                ],
+                expand=True,
+            ),
+            on_mount=self._on_mount
         )
+        
+        return self.container
+    
+    def _on_mount(self, e):
+        """Called when the control is mounted to the page"""
+        self._refresh_favorites()
     
     def _refresh_favorites(self):
         """Refresh favorites list from database"""
@@ -94,8 +102,10 @@ class FavoritesView:
             
             self.favorites_list.controls.append(self._create_favorite_item(fav))
         
-        if self.favorites_list.page:
-            self.favorites_list.page.update()
+        # Update the page if available
+        page = self.container.page if hasattr(self, 'container') else None
+        if page:
+            page.update()
     
     def _create_favorite_item(self, favorite: Dict) -> ft.Container:
         """Create a favorite list item"""
@@ -220,7 +230,8 @@ class FavoritesView:
     
     def _on_add_favorite(self, e):
         """Open dialog to add new favorite"""
-        if not self.favorites_list.page:
+        page = self.container.page if hasattr(self, 'container') else None
+        if not page:
             return
         
         # Create dialog
@@ -246,16 +257,17 @@ class FavoritesView:
             actions_alignment=ft.MainAxisAlignment.END,
         )
         
-        self.favorites_list.page.dialog = dialog
+        page.dialog = dialog
         dialog.open = True
-        self.favorites_list.page.update()
+        page.update()
     
     def _close_dialog(self):
         """Close current dialog"""
-        if self.favorites_list.page and self.favorites_list.page.dialog:
-            self.favorites_list.page.dialog.open = False
-            self.favorites_list.page.dialog = None
-            self.favorites_list.page.update()
+        page = self.container.page if hasattr(self, 'container') else None
+        if page and page.dialog:
+            page.dialog.open = False
+            page.dialog = None
+            page.update()
     
     def _add_favorite(self, url: str):
         """Add a favorite from URL"""
@@ -277,12 +289,13 @@ class FavoritesView:
             self._refresh_favorites()
         else:
             # Show error
-            if self.favorites_list.page:
-                self.favorites_list.page.snack_bar = ft.SnackBar(
+            page = self.container.page if hasattr(self, 'container') else None
+            if page:
+                page.snack_bar = ft.SnackBar(
                     content=ft.Text("Could not recognize this URL")
                 )
-                self.favorites_list.page.snack_bar.open = True
-                self.favorites_list.page.update()
+                page.snack_bar.open = True
+                page.update()
     
     def _on_download(self, e):
         """Download new chapters for a specific favorite"""
