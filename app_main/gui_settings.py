@@ -232,7 +232,7 @@ class SettingsView:
                         keyboard_type=ft.KeyboardType.NUMBER,
                         width=200,
                         on_change=self._on_setting_change,
-                        helper_text="Number of simultaneous manga downloads",
+                        helper="Number of simultaneous manga downloads",
                     ),
                     
                     # Max threads per download
@@ -243,7 +243,7 @@ class SettingsView:
                         keyboard_type=ft.KeyboardType.NUMBER,
                         width=200,
                         on_change=self._on_setting_change,
-                        helper_text="Threads for each manga download",
+                        helper="Threads for each manga download",
                     ),
                     
                     # Max retries
@@ -320,7 +320,7 @@ class SettingsView:
                         data='manga_custom_rename',
                         expand=True,
                         on_change=self._on_setting_change,
-                        helper_text="Use %MANGA% for manga name",
+                        helper="Use %MANGA% for manga name",
                     ),
                     
                     ft.Switch(
@@ -336,7 +336,7 @@ class SettingsView:
                         data='chapter_custom_rename',
                         expand=True,
                         on_change=self._on_setting_change,
-                        helper_text="Use %CHAPTER% for chapter name",
+                        helper="Use %CHAPTER% for chapter name",
                     ),
                     
                     ft.TextField(
@@ -345,7 +345,7 @@ class SettingsView:
                         data='filename_custom_rename',
                         expand=True,
                         on_change=self._on_setting_change,
-                        helper_text="Use %FILENAME% for image filename",
+                        helper="Use %FILENAME% for image filename",
                     ),
                     
                     ft.Divider(),
