@@ -1,10 +1,38 @@
 ```
-# Database files
-*.db
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
 
-# Configuration files
-config.json
+# Dependencies
+.venv/
+venv/
+env/
+requirements.txt.bak
 
-# Package manager lock files
-uv.lock
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+*.swo
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Editors
+.vscode/
+.idea/
+
+# Coverage
+.coverage
+coverage/
+htmlcov/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
 ```

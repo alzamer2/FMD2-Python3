@@ -86,11 +86,10 @@ class MainNavigationView:
         if self.current_index == 0:
             self.content_area.content = self.search_view.build()
         elif self.current_index == 1:
-            # Build favorites view and schedule refresh after mount
-            fav_view = self.favorites_view.build()
-            self.content_area.content = fav_view
-            # Refresh will be called automatically via did_mount
+            # Build favorites view - refresh will be called automatically via did_mount
+            self.content_area.content = self.favorites_view.build()
         elif self.current_index == 2:
+            # Build downloads view - refresh will be called automatically via did_mount
             self.content_area.content = self.downloads_view.build()
         elif self.current_index == 3:
             self.content_area.content = self.settings_view.build()

@@ -7,16 +7,21 @@ import flet as ft
 from typing import List, Dict, Optional
 
 
-class DownloadsView:
+class DownloadsView(ft.Column):
     """
     Downloads view showing active and completed downloads
     """
     
     def __init__(self, app):
+        super().__init__()
         self.app = app
         self.downloads_list = None
     
-    def build(self) -> ft.Column:
+    def did_mount(self):
+        """Called after the control is mounted into the page tree"""
+        self._refresh_downloads()
+    
+    def build(self) -> 'DownloadsView':
         """Build the downloads UI"""
         # Header with stats
         self.stats_row = ft.Row(
@@ -36,20 +41,25 @@ class DownloadsView:
             padding=10,
         )
         
-        # Load existing downloads
-        self._refresh_downloads()
+        # Create the main content column - set controls on self since we inherit from Column
+        self.controls = [
+            self.stats_row,
+            self.downloads_list,
+        ]
+        self.expand = True
         
-        return ft.Column(
-            controls=[
-                self.stats_row,
-                self.downloads_list,
-            ],
-            expand=True,
-        )
+        return self
     
     def _refresh_downloads(self):
         """Refresh downloads list from database"""
         if not self.app or not self.app.db_manager:
+            return
+        
+        # Check if the ListView is added to page
+        try:
+            _ = self.downloads_list.page
+        except RuntimeError:
+            # ListView not yet added to page, skip refresh
             return
         
         self.downloads_list.controls.clear()
@@ -90,8 +100,10 @@ class DownloadsView:
             for item in failed[:5]:  # Show last 5
                 self.downloads_list.controls.append(self._create_download_item(item, is_failed=True))
         
-        if self.downloads_list.page:
-            self.downloads_list.page.update()
+        # Update the page if available
+        page = self.page
+        if page:
+            page.update()
     
     def _create_download_item(self, download: Dict, is_active: bool = False, 
                                is_completed: bool = False, is_failed: bool = False) -> ft.Container:
