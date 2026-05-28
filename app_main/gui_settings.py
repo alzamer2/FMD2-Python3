@@ -154,6 +154,7 @@ class SettingsView:
                         ],
                         value=general.get('language', 'en'),
                         data='language',
+                        on_select=self._on_setting_change,
                     ),
                     
                     ft.Divider(),
@@ -171,7 +172,7 @@ class SettingsView:
                         ],
                         value=general.get('after_download_action', 'nothing'),
                         data='after_download_action',
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     # Delete completed tasks on close
@@ -289,7 +290,7 @@ class SettingsView:
                         ],
                         value=downloads.get('save_format', 'cbz'),
                         data='save_format',
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     # PDF Quality
@@ -409,7 +410,7 @@ class SettingsView:
                         ],
                         value=str(downloads.get('webp_save_as', 1)),
                         data='webp_save_as',
-                        on_change=self._on_setting_change,
+                        on_select=self._on_setting_change,
                     ),
                     
                     ft.TextField(

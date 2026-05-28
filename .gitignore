@@ -9,21 +9,11 @@ __pycache__/
 .vscode/
 .idea/
 
+# Logs
+*.log
+
 # Environment
 .env
 .env.local
 *.env.*
-
-# Logs
-*.log
-
-# Dependencies
-.venv/
-venv/
-node_modules/
-
-# Build artifacts
-dist/
-build/
-target/
 ```
