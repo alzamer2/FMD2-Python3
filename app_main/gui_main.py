@@ -24,44 +24,43 @@ class MainNavigationView:
     
     def build(self) -> ft.Column:
         """Build the main navigation UI"""
+        # Create tab definitions
+        self.tab_definitions = [
+            ft.Tab(
+                label="Downloads",
+                icon=ft.Icons.DOWNLOAD_OUTLINED,
+            ),
+            ft.Tab(
+                label="Manga Info",
+                icon=ft.Icons.SEARCH_OUTLINED,
+            ),
+            ft.Tab(
+                label="Favorites",
+                icon=ft.Icons.FAVORITE_BORDER,
+            ),
+            ft.Tab(
+                label="Settings",
+                icon=ft.Icons.SETTINGS_OUTLINED,
+            ),
+        ]
+        
         # Create content area
         self.content_area = ft.Container(
             expand=True,
             content=self.downloads_view.build()
         )
         
-        # Create top tabs for all views
-        self.tabs_control = ft.Tabs(
-            selected_index=0,
-            animation_duration=300,
-            tabs=[
-                ft.Tab(
-                    label="Downloads",
-                    icon=ft.Icons.DOWNLOAD_OUTLINED,
-                ),
-                ft.Tab(
-                    label="Manga Info",
-                    icon=ft.Icons.SEARCH_OUTLINED,
-                ),
-                ft.Tab(
-                    label="Favorites",
-                    icon=ft.Icons.FAVORITE_BORDER,
-                ),
-                ft.Tab(
-                    label="Settings",
-                    icon=ft.Icons.SETTINGS_OUTLINED,
-                ),
-            ],
+        # Create TabBar for top navigation
+        self.tab_bar = ft.TabBar(
+            tabs=self.tab_definitions,
             on_change=self._on_nav_change,
-            expand=True,
         )
         
         # Main layout
         return ft.Column(
             expand=True,
             controls=[
-                self.tabs_control,
-                ft.VerticalDivider(width=1, height=0, visible=False),  # Hidden divider for compatibility
+                self.tab_bar,
                 self.content_area,
             ],
             spacing=0,
@@ -90,19 +89,19 @@ class MainNavigationView:
     def _on_new_click(self, e):
         """Handle new download/favorite button click"""
         # Navigate to manga info (search) tab
-        if self.tabs_control:
-            self.tabs_control.selected_index = 1
-            self.tabs_control.update()
+        if self.tab_bar:
+            self.tab_bar.selected_index = 1
+            self.tab_bar.update()
         self.search_view.focus_search()
     
     def switch_to_downloads(self):
         """Switch to downloads tab"""
-        if self.tabs_control:
-            self.tabs_control.selected_index = 0
-            self.tabs_control.update()
+        if self.tab_bar:
+            self.tab_bar.selected_index = 0
+            self.tab_bar.update()
     
     def switch_to_favorites(self):
         """Switch to favorites tab"""
-        if self.tabs_control:
-            self.tabs_control.selected_index = 2
-            self.tabs_control.update()
+        if self.tab_bar:
+            self.tab_bar.selected_index = 2
+            self.tab_bar.update()
