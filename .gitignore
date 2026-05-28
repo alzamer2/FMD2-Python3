@@ -1,4 +1,10 @@
 ```
-__pycache__/
-*.pyc
+# Database files
+*.db
+
+# Configuration files
+config.json
+
+# Package manager lock files
+uv.lock
 ```
