@@ -36,22 +36,22 @@ class MainNavigationView:
             animation_duration=300,
             tabs=[
                 ft.Tab(
-                    text="Downloads",
+                    label="Downloads",
                     icon=ft.Icons.DOWNLOAD_OUTLINED,
                     selected_icon=ft.Icons.DOWNLOAD,
                 ),
                 ft.Tab(
-                    text="Manga Info",
+                    label="Manga Info",
                     icon=ft.Icons.SEARCH_OUTLINED,
                     selected_icon=ft.Icons.SEARCH,
                 ),
                 ft.Tab(
-                    text="Favorites",
+                    label="Favorites",
                     icon=ft.Icons.FAVORITE_BORDER,
                     selected_icon=ft.Icons.FAVORITE,
                 ),
                 ft.Tab(
-                    text="Settings",
+                    label="Settings",
                     icon=ft.Icons.SETTINGS_OUTLINED,
                     selected_icon=ft.Icons.SETTINGS,
                 ),
