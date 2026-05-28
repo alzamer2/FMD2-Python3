@@ -52,8 +52,9 @@ class FavoritesView:
                 ft.dropdown.Option("ongoing", "Ongoing"),
             ],
             value="all",
-            on_change=self._on_filter_change
         )
+        # Assign event handler after initialization
+        self.filter_dropdown.on_change = self._on_filter_change
         
         # Favorites list
         self.favorites_list = ft.ListView(

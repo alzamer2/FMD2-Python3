@@ -103,8 +103,16 @@ class ModuleLoader:
     
     def __init__(self, lua_handler):
         self.lua_handler = lua_handler
-        self.modules_dir = lua_handler.lua_dir / 'modules'
-        self.templates_dir = lua_handler.lua_dir / 'templates'
+        # Handle both LuaHandler object and direct LuaRuntime
+        if hasattr(lua_handler, 'lua_dir'):
+            self.modules_dir = lua_handler.lua_dir / 'modules'
+            self.templates_dir = lua_handler.lua_dir / 'templates'
+        else:
+            # Direct LuaRuntime - use default paths
+            from pathlib import Path
+            lua_dir = Path(__file__).parent.parent / 'lua'
+            self.modules_dir = lua_dir / 'modules'
+            self.templates_dir = lua_dir / 'templates'
         self.loaded_modules: List[MangaModule] = []
         self.modules_by_id: Dict[str, MangaModule] = {}
         self.modules_by_name: Dict[str, MangaModule] = {}
