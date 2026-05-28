@@ -23,9 +23,9 @@ class DownloadsView:
             controls=[
                 ft.Text("Downloads", size=20, weight=ft.FontWeight.BOLD),
                 ft.Container(expand=True),
-                ft.TextButton("Pause All", icon=ft.icons.PAUSE, on_click=self._on_pause_all),
-                ft.TextButton("Resume All", icon=ft.icons.PLAY_ARROW, on_click=self._on_resume_all),
-                ft.TextButton("Clear Completed", icon=ft.icons.CLEAR_ALL, on_click=self._on_clear_completed),
+                ft.TextButton("Pause All", icon=ft.Icons.PAUSE, on_click=self._on_pause_all),
+                ft.TextButton("Resume All", icon=ft.Icons.PLAY_ARROW, on_click=self._on_resume_all),
+                ft.TextButton("Clear Completed", icon=ft.Icons.CLEAR_ALL, on_click=self._on_clear_completed),
             ]
         )
         
@@ -105,13 +105,13 @@ class DownloadsView:
         # Status color
         if is_completed:
             status_color = ft.colors.GREEN
-            status_icon = ft.icons.CHECK_CIRCLE
+            status_icon = ft.Icons.CHECK_CIRCLE
         elif is_failed:
             status_color = ft.colors.RED
-            status_icon = ft.icons.ERROR
+            status_icon = ft.Icons.ERROR
         else:
             status_color = ft.colors.BLUE
-            status_icon = ft.icons.DOWNLOADING
+            status_icon = ft.Icons.DOWNLOADING
         
         # Progress bar
         progress_bar = ft.ProgressBar(
@@ -128,7 +128,7 @@ class DownloadsView:
         if is_active:
             controls.append(
                 ft.IconButton(
-                    icon=ft.icons.PAUSE,
+                    icon=ft.Icons.PAUSE,
                     tooltip="Pause",
                     data=download['id'],
                     on_click=self._on_pause
@@ -136,7 +136,7 @@ class DownloadsView:
             )
             controls.append(
                 ft.IconButton(
-                    icon=ft.icons.CANCEL,
+                    icon=ft.Icons.CANCEL,
                     tooltip="Cancel",
                     data=download['id'],
                     on_click=self._on_cancel
@@ -145,7 +145,7 @@ class DownloadsView:
         elif status == 'paused':
             controls.append(
                 ft.IconButton(
-                    icon=ft.icons.PLAY_ARROW,
+                    icon=ft.Icons.PLAY_ARROW,
                     tooltip="Resume",
                     data=download['id'],
                     on_click=self._on_resume
@@ -153,7 +153,7 @@ class DownloadsView:
             )
             controls.append(
                 ft.IconButton(
-                    icon=ft.icons.CANCEL,
+                    icon=ft.Icons.CANCEL,
                     tooltip="Cancel",
                     data=download['id'],
                     on_click=self._on_cancel
@@ -162,7 +162,7 @@ class DownloadsView:
         elif is_failed:
             controls.append(
                 ft.IconButton(
-                    icon=ft.icons.REFRESH,
+                    icon=ft.Icons.REFRESH,
                     tooltip="Retry",
                     data=download['id'],
                     on_click=self._on_retry
@@ -170,7 +170,7 @@ class DownloadsView:
             )
             controls.append(
                 ft.IconButton(
-                    icon=ft.icons.DELETE,
+                    icon=ft.Icons.DELETE,
                     tooltip="Remove",
                     data=download['id'],
                     on_click=self._on_remove
