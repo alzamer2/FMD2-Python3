@@ -35,8 +35,8 @@ class SearchView:
         
         # Search field
         self.search_field = ft.TextField(
-            label="Search Manga",
-            hint_text="Enter manga title...",
+            label="Search Manga or Paste URL",
+            hint_text="Enter manga title or paste manga URL...",
             expand=True,
             on_submit=self._on_search,
             suffix_icon=ft.Icons.SEARCH,
@@ -124,6 +124,12 @@ class SearchView:
         if not query:
             return
         
+        # Check if it's a URL (direct manga info lookup)
+        if query.startswith('http://') or query.startswith('https://'):
+            # It's a URL, get manga info directly
+            self._get_manga_info_from_url(query)
+            return
+        
         # Show loading
         self.loading_indicator.visible = True
         self.search_field.page.update()
@@ -131,6 +137,38 @@ class SearchView:
         # Perform search (async)
         import threading
         threading.Thread(target=self._perform_search, args=(query, site_key), daemon=True).start()
+    
+    def _get_manga_info_from_url(self, url: str):
+        """Get manga info directly from URL"""
+        try:
+            # Show loading
+            self.loading_indicator.visible = True
+            if self.search_field.page:
+                self.search_field.page.update()
+            
+            # Find module for this URL
+            module = None
+            if self.app and self.app.module_loader:
+                module = self.app.module_loader.find_module_for_url(url)
+            
+            if module:
+                # Get manga info directly
+                manga_info = module.get_manga_info(url)
+                if manga_info:
+                    # Display single result with manga info
+                    self._update_results([manga_info])
+                else:
+                    print(f"Failed to get manga info from URL: {url}")
+            else:
+                print(f"No module found for URL: {url}")
+            
+        except Exception as e:
+            print(f"Error getting manga info from URL: {e}")
+        finally:
+            # Hide loading
+            self.loading_indicator.visible = False
+            if self.search_field.page:
+                self.search_field.page.update()
     
     def _perform_search(self, query: str, site_key: str):
         """Perform search in background thread"""

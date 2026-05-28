@@ -21,6 +21,7 @@ class MainNavigationView:
         
         self.current_index = 0
         self.content_area = None
+        self.nav_rail = None  # Store reference to navigation rail
     
     def build(self) -> ft.Column:
         """Build the main navigation UI"""
@@ -31,7 +32,7 @@ class MainNavigationView:
         )
         
         # Create navigation rail for desktop
-        nav_rail = ft.NavigationRail(
+        self.nav_rail = ft.NavigationRail(
             selected_index=0,
             label_type=ft.NavigationRailLabelType.ALL,
             min_width=100,
@@ -71,7 +72,7 @@ class MainNavigationView:
         return ft.Row(
             expand=True,
             controls=[
-                nav_rail,
+                self.nav_rail,
                 ft.VerticalDivider(width=1),
                 self.content_area,
             ],
@@ -96,7 +97,9 @@ class MainNavigationView:
     def _on_new_click(self, e):
         """Handle new download/favorite button click"""
         # Navigate to search and focus on search box
-        e.page.navigation_rail.selected_index = 0
+        if self.nav_rail:
+            self.nav_rail.selected_index = 0
+            self.nav_rail.update()
         self.search_view.focus_search()
     
     def switch_to_downloads(self):
