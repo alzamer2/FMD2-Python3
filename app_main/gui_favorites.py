@@ -25,16 +25,16 @@ class FavoritesView:
                 ft.Container(expand=True),
                 ft.ElevatedButton(
                     "Check Updates",
-                    icon=ft.icons.REFRESH,
+                    icon=ft.Icons.REFRESH,
                     on_click=self._on_check_updates
                 ),
                 ft.ElevatedButton(
                     "Download New",
-                    icon=ft.icons.DOWNLOAD,
+                    icon=ft.Icons.DOWNLOAD,
                     on_click=self._on_download_new
                 ),
                 ft.IconButton(
-                    icon=ft.icons.ADD,
+                    icon=ft.Icons.ADD,
                     tooltip="Add Favorite",
                     on_click=self._on_add_favorite
                 ),
@@ -120,7 +120,7 @@ class FavoritesView:
                         height=80,
                         bgcolor=ft.colors.GREY_300,
                         border_radius=5,
-                        content=ft.Icon(ft.icons.MENU_BOOK, size=40) if not cover_url else None,
+                        content=ft.Icon(ft.Icons.MENU_BOOK, size=40) if not cover_url else None,
                     ),
                     
                     # Info column
@@ -150,20 +150,20 @@ class FavoritesView:
                     ft.Row(
                         controls=[
                             ft.IconButton(
-                                icon=ft.icons.DOWNLOAD,
+                                icon=ft.Icons.DOWNLOAD,
                                 tooltip="Download New",
                                 data=favorite['manga_url'],
                                 on_click=self._on_download,
                                 visible=new_count > 0,
                             ),
                             ft.IconButton(
-                                icon=ft.icons.INFO_OUTLINE,
+                                icon=ft.Icons.INFO_OUTLINE,
                                 tooltip="Info",
                                 data=favorite['manga_url'],
                                 on_click=self._on_info,
                             ),
                             ft.IconButton(
-                                icon=ft.icons.DELETE if not enabled else ft.icons.REMOVE_CIRCLE,
+                                icon=ft.Icons.DELETE if not enabled else ft.Icons.REMOVE_CIRCLE,
                                 tooltip="Remove" if enabled else "Disable",
                                 data=favorite['manga_url'],
                                 on_click=self._on_remove_or_disable,

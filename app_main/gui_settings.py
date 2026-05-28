@@ -112,12 +112,12 @@ class SettingsView:
                         controls=[
                             ft.ElevatedButton(
                                 "Save Changes",
-                                icon=ft.icons.SAVE,
+                                icon=ft.Icons.SAVE,
                                 on_click=self._on_save_settings,
                             ),
                             ft.ElevatedButton(
                                 "Reset to Defaults",
-                                icon=ft.icons.UNDO,
+                                icon=ft.Icons.UNDO,
                                 on_click=self._on_reset_defaults,
                             ),
                         ]
@@ -181,7 +181,7 @@ class SettingsView:
                         expand=True,
                         on_change=self._on_setting_change,
                         suffix=ft.IconButton(
-                            icon=ft.icons.FOLDER_OPEN,
+                            icon=ft.Icons.FOLDER_OPEN,
                             on_click=self._on_browse_folder,
                         ),
                     ),
@@ -227,7 +227,7 @@ class SettingsView:
                     # Test connection button
                     ft.ElevatedButton(
                         "Test Connection",
-                        icon=ft.icons.WIFI,
+                        icon=ft.Icons.WIFI,
                         on_click=self._on_test_connection,
                     ),
                 ],
@@ -274,7 +274,7 @@ class SettingsView:
                     # Apply theme button
                     ft.ElevatedButton(
                         "Apply Theme",
-                        icon=ft.icons.PALETTE,
+                        icon=ft.Icons.PALETTE,
                         on_click=self._on_apply_theme,
                     ),
                 ],
@@ -309,7 +309,7 @@ class SettingsView:
                     # Check for updates button
                     ft.ElevatedButton(
                         "Check for Updates",
-                        icon=ft.icons.UPDATE,
+                        icon=ft.Icons.UPDATE,
                         on_click=self._on_check_updates,
                     ),
                     

@@ -39,13 +39,13 @@ class SearchView:
             hint_text="Enter manga title...",
             expand=True,
             on_submit=self._on_search,
-            suffix_icon=ft.icons.SEARCH,
+            suffix_icon=ft.Icons.SEARCH,
         )
         
         # Search button
         search_button = ft.ElevatedButton(
             "Search",
-            icon=ft.icons.SEARCH,
+            icon=ft.Icons.SEARCH,
             on_click=self._on_search
         )
         
@@ -193,7 +193,7 @@ class SearchView:
                     width=150,
                     height=200,
                     bgcolor=ft.colors.GREY_300,
-                    content=ft.Icon(ft.icons.IMAGE_NOT_SUPPORTED, size=50)
+                    content=ft.Icon(ft.Icons.IMAGE_NOT_SUPPORTED, size=50)
                 )
             )
         else:
@@ -203,7 +203,7 @@ class SearchView:
                 bgcolor=ft.colors.GREY_300,
                 content=ft.Column(
                     controls=[
-                        ft.Icon(ft.icons.MENU_BOOK, size=50),
+                        ft.Icon(ft.Icons.MENU_BOOK, size=50),
                         ft.Text("No Cover", size=12),
                     ],
                     alignment=ft.MainAxisAlignment.CENTER,
@@ -220,8 +220,8 @@ class SearchView:
                         ft.Text(author, size=12, color=ft.colors.GREY, max_lines=1, overflow=ft.TextOverflow.ELLIPSIS),
                         ft.Row(
                             controls=[
-                                ft.TextButton("Info", icon=ft.icons.INFO_OUTLINE),
-                                ft.TextButton("Download", icon=ft.icons.DOWNLOAD),
+                                ft.TextButton("Info", icon=ft.Icons.INFO_OUTLINE),
+                                ft.TextButton("Download", icon=ft.Icons.DOWNLOAD),
                             ],
                             alignment=ft.MainAxisAlignment.SPACE_EVENLY,
                         ),

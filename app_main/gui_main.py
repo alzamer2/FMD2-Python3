@@ -37,30 +37,30 @@ class MainNavigationView:
             min_width=100,
             min_extended_width=400,
             leading=ft.FloatingActionButton(
-                icon=ft.icons.ADD, 
-                label=ft.Text("New"),
+                content=ft.Text("New"),
+                icon=ft.Icons.ADD,
                 on_click=self._on_new_click
             ),
             group_alignment=-0.95,
             destinations=[
                 ft.NavigationRailDestination(
-                    icon=ft.icons.SEARCH_OUTLINED,
-                    selected_icon=ft.icons.SEARCH,
+                    icon=ft.Icons.SEARCH_OUTLINED,
+                    selected_icon=ft.Icons.SEARCH,
                     label=ft.Text("Search")
                 ),
                 ft.NavigationRailDestination(
-                    icon=ft.icons.FAVORITE_BORDER,
-                    selected_icon=ft.icons.FAVORITE,
+                    icon=ft.Icons.FAVORITE_BORDER,
+                    selected_icon=ft.Icons.FAVORITE,
                     label=ft.Text("Favorites")
                 ),
                 ft.NavigationRailDestination(
-                    icon=ft.icons.DOWNLOAD_OUTLINED,
-                    selected_icon=ft.icons.DOWNLOAD,
+                    icon=ft.Icons.DOWNLOAD_OUTLINED,
+                    selected_icon=ft.Icons.DOWNLOAD,
                     label=ft.Text("Downloads")
                 ),
                 ft.NavigationRailDestination(
-                    icon=ft.icons.SETTINGS_OUTLINED,
-                    selected_icon=ft.icons.SETTINGS,
+                    icon=ft.Icons.SETTINGS_OUTLINED,
+                    selected_icon=ft.Icons.SETTINGS,
                     label=ft.Text("Settings")
                 ),
             ],
