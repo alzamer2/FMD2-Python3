@@ -171,7 +171,7 @@ class SettingsView:
                         ],
                         value=general.get('after_download_action', 'nothing'),
                         data='after_download_action',
-                        on_select=self._on_setting_change,
+                        on_change=self._on_setting_change,
                     ),
                     
                     # Delete completed tasks on close
@@ -289,7 +289,7 @@ class SettingsView:
                         ],
                         value=downloads.get('save_format', 'cbz'),
                         data='save_format',
-                        on_select=self._on_setting_change,
+                        on_change=self._on_setting_change,
                     ),
                     
                     # PDF Quality
@@ -409,7 +409,7 @@ class SettingsView:
                         ],
                         value=str(downloads.get('webp_save_as', 1)),
                         data='webp_save_as',
-                        on_select=self._on_setting_change,
+                        on_change=self._on_setting_change,
                     ),
                     
                     ft.TextField(
@@ -575,7 +575,7 @@ class SettingsView:
                         ),
                         value=gui.get('theme', 'system'),
                         data='theme',
-                        on_select=self._on_setting_change,
+                        on_change=self._on_setting_change,
                     ),
                     
                     # Compact mode
