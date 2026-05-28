@@ -108,6 +108,34 @@ class SettingsView:
                         on_change=self._on_setting_change,
                     ),
                     
+                    # Auto check favorites on startup
+                    ft.Switch(
+                        label="Auto-check favorites on startup",
+                        value=general.get('auto_check_fav_startup', True),
+                        data='auto_check_fav_startup',
+                        on_change=self._on_setting_change,
+                    ),
+                    
+                    # Auto check favorites interval
+                    ft.Row(
+                        controls=[
+                            ft.Switch(
+                                label="Auto-check favorites interval",
+                                value=general.get('auto_check_fav_interval', False),
+                                data='auto_check_fav_interval',
+                                on_change=self._on_setting_change,
+                            ),
+                            ft.TextField(
+                                label="Interval (minutes)",
+                                value=str(general.get('auto_check_fav_interval_minutes', 60)),
+                                data='auto_check_fav_interval_minutes',
+                                keyboard_type=ft.KeyboardType.NUMBER,
+                                width=120,
+                                on_change=self._on_setting_change,
+                            ),
+                        ]
+                    ),
+                    
                     # Language selector
                     ft.Dropdown(
                         label="Language",
@@ -126,6 +154,40 @@ class SettingsView:
                         ],
                         value=general.get('language', 'en'),
                         data='language',
+                    ),
+                    
+                    ft.Divider(),
+                    
+                    # After download action
+                    ft.Dropdown(
+                        label="After all downloads complete",
+                        width=250,
+                        options=[
+                            ft.dropdown.Option("nothing", "Do nothing"),
+                            ft.dropdown.Option("exit", "Exit application"),
+                            ft.dropdown.Option("poweroff", "Power off computer"),
+                            ft.dropdown.Option("hibernate", "Hibernate computer"),
+                            ft.dropdown.Option("update", "Check for updates"),
+                        ],
+                        value=general.get('after_download_action', 'nothing'),
+                        data='after_download_action',
+                        on_change=self._on_setting_change,
+                    ),
+                    
+                    # Delete completed tasks on close
+                    ft.Switch(
+                        label="Delete completed tasks on close",
+                        value=general.get('delete_completed_tasks_on_close', False),
+                        data='delete_completed_tasks_on_close',
+                        on_change=self._on_setting_change,
+                    ),
+                    
+                    # Sort downloads on new tasks
+                    ft.Switch(
+                        label="Sort downloads when adding new tasks",
+                        value=general.get('sort_downloads_on_new_tasks', False),
+                        data='sort_downloads_on_new_tasks',
+                        on_change=self._on_setting_change,
                     ),
                     
                     ft.Divider(),
@@ -162,39 +224,213 @@ class SettingsView:
                     ft.Text("Download Settings", size=18, weight=ft.FontWeight.BOLD),
                     ft.Divider(),
                     
-                    # Max concurrent downloads
+                    # Max parallel downloads
                     ft.TextField(
-                        label="Max Concurrent Downloads",
-                        value=str(downloads.get('max_concurrent', 3)),
-                        data='max_concurrent',
+                        label="Max Parallel Downloads",
+                        value=str(downloads.get('max_parallel', 1)),
+                        data='max_parallel',
+                        keyboard_type=ft.KeyboardType.NUMBER,
+                        width=200,
+                        on_change=self._on_setting_change,
+                        helper_text="Number of simultaneous manga downloads",
+                    ),
+                    
+                    # Max threads per download
+                    ft.TextField(
+                        label="Max Threads per Download",
+                        value=str(downloads.get('max_threads', 1)),
+                        data='max_threads',
+                        keyboard_type=ft.KeyboardType.NUMBER,
+                        width=200,
+                        on_change=self._on_setting_change,
+                        helper_text="Threads for each manga download",
+                    ),
+                    
+                    # Max retries
+                    ft.TextField(
+                        label="Max Retries per Chapter",
+                        value=str(downloads.get('max_retry', 5)),
+                        data='max_retry',
                         keyboard_type=ft.KeyboardType.NUMBER,
                         width=200,
                         on_change=self._on_setting_change,
                     ),
                     
-                    # Retry count
+                    # Retry failed tasks
                     ft.TextField(
-                        label="Max Retries per Download",
-                        value=str(downloads.get('retry_count', 3)),
-                        data='retry_count',
+                        label="Retry Failed Tasks",
+                        value=str(downloads.get('retry_failed_task', 1)),
+                        data='retry_failed_task',
                         keyboard_type=ft.KeyboardType.NUMBER,
                         width=200,
                         on_change=self._on_setting_change,
                     ),
+                    
+                    # Always start from failed chapters
+                    ft.Switch(
+                        label="Always start from failed chapters",
+                        value=downloads.get('always_start_from_failed', True),
+                        data='always_start_from_failed',
+                        on_change=self._on_setting_change,
+                    ),
+                    
+                    ft.Divider(),
                     
                     # Save format
                     ft.Dropdown(
                         label="Save Format",
-                        width=200,
+                        width=250,
                         options=[
                             ft.dropdown.Option("cbz", "CBZ (Comic Book ZIP)"),
-                            ft.dropdown.Option("zip", "ZIP"),
-                            ft.dropdown.Option("pdf", "PDF"),
-                            ft.dropdown.Option("folder", "Folder (Images)"),
+                            ft.dropdown.Option("zip", "ZIP Archive"),
+                            ft.dropdown.Option("pdf", "PDF Document"),
+                            ft.dropdown.Option("folder", "Folder (Raw Images)"),
+                            ft.dropdown.Option("epub", "EPUB eBook"),
                         ],
                         value=downloads.get('save_format', 'cbz'),
                         data='save_format',
+                        on_change=self._on_setting_change,
                     ),
+                    
+                    # PDF Quality
+                    ft.Slider(
+                        label="PDF Quality",
+                        min=1,
+                        max=100,
+                        divisions=99,
+                        value=downloads.get('pdf_quality', 95),
+                        data='pdf_quality',
+                        width=300,
+                        on_change=self._on_setting_change,
+                    ),
+                    
+                    ft.Divider(),
+                    
+                    # Folder naming
+                    ft.Switch(
+                        label="Generate manga folder",
+                        value=downloads.get('generate_manga_folder', False),
+                        data='generate_manga_folder',
+                        on_change=self._on_setting_change,
+                    ),
+                    
+                    ft.TextField(
+                        label="Manga folder name pattern",
+                        value=downloads.get('manga_custom_rename', '%MANGA%'),
+                        data='manga_custom_rename',
+                        expand=True,
+                        on_change=self._on_setting_change,
+                        helper_text="Use %MANGA% for manga name",
+                    ),
+                    
+                    ft.Switch(
+                        label="Generate chapter folder",
+                        value=downloads.get('generate_chapter_folder', True),
+                        data='generate_chapter_folder',
+                        on_change=self._on_setting_change,
+                    ),
+                    
+                    ft.TextField(
+                        label="Chapter folder name pattern",
+                        value=downloads.get('chapter_custom_rename', '%CHAPTER%'),
+                        data='chapter_custom_rename',
+                        expand=True,
+                        on_change=self._on_setting_change,
+                        helper_text="Use %CHAPTER% for chapter name",
+                    ),
+                    
+                    ft.TextField(
+                        label="Filename pattern",
+                        value=downloads.get('filename_custom_rename', '%FILENAME%'),
+                        data='filename_custom_rename',
+                        expand=True,
+                        on_change=self._on_setting_change,
+                        helper_text="Use %FILENAME% for image filename",
+                    ),
+                    
+                    ft.Divider(),
+                    
+                    # Convert digits
+                    ft.Row(
+                        controls=[
+                            ft.Switch(
+                                label="Convert volume to digits",
+                                value=downloads.get('convert_digit_volume', False),
+                                data='convert_digit_volume',
+                                on_change=self._on_setting_change,
+                            ),
+                            ft.TextField(
+                                label="Volume digit length",
+                                value=str(downloads.get('convert_digit_volume_length', 2)),
+                                data='convert_digit_volume_length',
+                                keyboard_type=ft.KeyboardType.NUMBER,
+                                width=100,
+                                on_change=self._on_setting_change,
+                            ),
+                        ]
+                    ),
+                    
+                    ft.Row(
+                        controls=[
+                            ft.Switch(
+                                label="Convert chapter to digits",
+                                value=downloads.get('convert_digit_chapter', False),
+                                data='convert_digit_chapter',
+                                on_change=self._on_setting_change,
+                            ),
+                            ft.TextField(
+                                label="Chapter digit length",
+                                value=str(downloads.get('convert_digit_chapter_length', 3)),
+                                data='convert_digit_chapter_length',
+                                keyboard_type=ft.KeyboardType.NUMBER,
+                                width=100,
+                                on_change=self._on_setting_change,
+                            ),
+                        ]
+                    ),
+                    
+                    ft.Divider(),
+                    
+                    # Image conversion
+                    ft.Switch(
+                        label="Convert PNG to JPEG",
+                        value=downloads.get('png_save_as_jpeg', False),
+                        data='png_save_as_jpeg',
+                        on_change=self._on_setting_change,
+                    ),
+                    
+                    ft.Dropdown(
+                        label="WebP save as",
+                        width=200,
+                        options=[
+                            ft.dropdown.Option("0", "Keep as WebP"),
+                            ft.dropdown.Option("1", "Convert to PNG"),
+                            ft.dropdown.Option("2", "Convert to JPEG"),
+                        ],
+                        value=str(downloads.get('webp_save_as', 1)),
+                        data='webp_save_as',
+                        on_change=self._on_setting_change,
+                    ),
+                    
+                    ft.TextField(
+                        label="PNG compression level (1-9)",
+                        value=str(downloads.get('png_compression_level', 1)),
+                        data='png_compression_level',
+                        keyboard_type=ft.KeyboardType.NUMBER,
+                        width=150,
+                        on_change=self._on_setting_change,
+                    ),
+                    
+                    ft.TextField(
+                        label="JPEG quality (1-100)",
+                        value=str(downloads.get('jpeg_quality', 80)),
+                        data='jpeg_quality',
+                        keyboard_type=ft.KeyboardType.NUMBER,
+                        width=150,
+                        on_change=self._on_setting_change,
+                    ),
+                    
+                    ft.Divider(),
                     
                     # Download path
                     ft.TextField(
@@ -225,6 +461,74 @@ class SettingsView:
                     ft.Text("Network Settings", size=18, weight=ft.FontWeight.BOLD),
                     ft.Divider(),
                     
+                    # Connection timeout
+                    ft.TextField(
+                        label="Connection Timeout (seconds)",
+                        value=str(network.get('connection_timeout', 30)),
+                        data='connection_timeout',
+                        keyboard_type=ft.KeyboardType.NUMBER,
+                        width=200,
+                        on_change=self._on_setting_change,
+                    ),
+                    
+                    # Max favorite threads
+                    ft.TextField(
+                        label="Max Favorite Check Threads",
+                        value=str(network.get('max_favorite_threads', 1)),
+                        data='max_favorite_threads',
+                        keyboard_type=ft.KeyboardType.NUMBER,
+                        width=200,
+                        on_change=self._on_setting_change,
+                    ),
+                    
+                    # Max update list threads
+                    ft.TextField(
+                        label="Max Update List Threads",
+                        value=str(network.get('max_update_list_threads', 1)),
+                        data='max_update_list_threads',
+                        keyboard_type=ft.KeyboardType.NUMBER,
+                        width=200,
+                        on_change=self._on_setting_change,
+                    ),
+                    
+                    # Max background load threads
+                    ft.TextField(
+                        label="Max Background Load Threads",
+                        value=str(network.get('max_background_load_threads', 1)),
+                        data='max_background_load_threads',
+                        keyboard_type=ft.KeyboardType.NUMBER,
+                        width=200,
+                        on_change=self._on_setting_change,
+                    ),
+                    
+                    ft.Divider(),
+                    
+                    # Use GZip
+                    ft.Switch(
+                        label="Use GZip compression",
+                        value=network.get('use_gzip', True),
+                        data='use_gzip',
+                        on_change=self._on_setting_change,
+                    ),
+                    
+                    # Cloudflare bypass
+                    ft.Switch(
+                        label="Enable Cloudflare bypass",
+                        value=network.get('enable_cloudflare_bypass', True),
+                        data='enable_cloudflare_bypass',
+                        on_change=self._on_setting_change,
+                    ),
+                    
+                    # Auto disable cloudflare bypass
+                    ft.Switch(
+                        label="Auto-disable Cloudflare bypass on failure",
+                        value=network.get('auto_disable_cloudflare_bypass', False),
+                        data='auto_disable_cloudflare_bypass',
+                        on_change=self._on_setting_change,
+                    ),
+                    
+                    ft.Divider(),
+                    
                     # Proxy settings
                     ft.TextField(
                         label="Proxy URL (optional)",
@@ -232,16 +536,6 @@ class SettingsView:
                         value=network.get('proxy', ''),
                         data='proxy',
                         expand=True,
-                        on_change=self._on_setting_change,
-                    ),
-                    
-                    # Timeout
-                    ft.TextField(
-                        label="Request Timeout (seconds)",
-                        value=str(network.get('timeout', 30)),
-                        data='timeout',
-                        keyboard_type=ft.KeyboardType.NUMBER,
-                        width=200,
                         on_change=self._on_setting_change,
                     ),
                     
@@ -289,6 +583,40 @@ class SettingsView:
                         label="Compact Mode",
                         value=gui.get('compact_mode', False),
                         data='compact_mode',
+                        on_change=self._on_setting_change,
+                    ),
+                    
+                    ft.Divider(),
+                    
+                    # Show balloon hints
+                    ft.Switch(
+                        label="Show notification balloons",
+                        value=gui.get('show_balloon_hint', True),
+                        data='show_balloon_hint',
+                        on_change=self._on_setting_change,
+                    ),
+                    
+                    # Show favorites tab on new manga
+                    ft.Switch(
+                        label="Switch to favorites tab when new chapters found",
+                        value=gui.get('show_favorites_tab_on_new_manga', False),
+                        data='show_favorites_tab_on_new_manga',
+                        on_change=self._on_setting_change,
+                    ),
+                    
+                    # Show downloads tab on new tasks
+                    ft.Switch(
+                        label="Switch to downloads tab on new tasks",
+                        value=gui.get('show_downloads_tab_on_new_tasks', True),
+                        data='show_downloads_tab_on_new_tasks',
+                        on_change=self._on_setting_change,
+                    ),
+                    
+                    # Enable load cover
+                    ft.Switch(
+                        label="Load and display cover images",
+                        value=gui.get('enable_load_cover', False),
+                        data='enable_load_cover',
                         on_change=self._on_setting_change,
                     ),
                     
@@ -360,13 +688,34 @@ class SettingsView:
             return
         
         # Determine which section
-        if data in ['one_instance_only', 'check_updates', 'language']:
+        general_settings = ['one_instance_only', 'check_updates', 'language', 
+                           'auto_check_fav_startup', 'auto_check_fav_interval', 
+                           'auto_check_fav_interval_minutes', 'after_download_action',
+                           'delete_completed_tasks_on_close', 'sort_downloads_on_new_tasks']
+        download_settings = ['max_parallel', 'max_threads', 'max_retry', 'retry_failed_task',
+                            'always_start_from_failed', 'save_format', 'pdf_quality',
+                            'generate_manga_folder', 'manga_custom_rename', 
+                            'generate_chapter_folder', 'chapter_custom_rename',
+                            'filename_custom_rename', 'convert_digit_volume', 
+                            'convert_digit_volume_length', 'convert_digit_chapter',
+                            'convert_digit_chapter_length', 'png_save_as_jpeg',
+                            'webp_save_as', 'png_compression_level', 'jpeg_quality',
+                            'download_path']
+        network_settings = ['connection_timeout', 'max_favorite_threads', 
+                           'max_update_list_threads', 'max_background_load_threads',
+                           'use_gzip', 'enable_cloudflare_bypass', 
+                           'auto_disable_cloudflare_bypass', 'proxy']
+        gui_settings = ['theme', 'compact_mode', 'show_balloon_hint',
+                       'show_favorites_tab_on_new_manga', 'show_downloads_tab_on_new_tasks',
+                       'enable_load_cover']
+        
+        if data in general_settings:
             section = 'general'
-        elif data in ['max_concurrent', 'retry_count', 'save_format', 'download_path']:
+        elif data in download_settings:
             section = 'downloads'
-        elif data in ['proxy', 'timeout']:
+        elif data in network_settings:
             section = 'network'
-        elif data in ['theme', 'compact_mode']:
+        elif data in gui_settings:
             section = 'gui'
         else:
             return
@@ -379,6 +728,8 @@ class SettingsView:
         elif isinstance(control, ft.Dropdown):
             value = control.value
         elif isinstance(control, ft.RadioGroup):
+            value = control.value
+        elif isinstance(control, ft.Slider):
             value = control.value
         else:
             return
