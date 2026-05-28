@@ -34,18 +34,37 @@ class SettingsView:
         # About section
         about_section = self._build_about_section()
         
-        # Create tabs
+        # Create tabs using Flet 0.85.2 API
         self.settings_tabs = ft.Tabs(
             selected_index=0,
             animation_duration=300,
-            tabs=[
-                ft.Tab(text="General", content=general_settings),
-                ft.Tab(text="Downloads", content=download_settings),
-                ft.Tab(text="Network", content=network_settings),
-                ft.Tab(text="Appearance", content=gui_settings),
-                ft.Tab(text="About", content=about_section),
-            ],
+            length=5,
+            content=ft.Column(
+                expand=True,
+                controls=[
+                    ft.TabBar(
+                        tabs=[
+                            ft.Tab(label="General"),
+                            ft.Tab(label="Downloads"),
+                            ft.Tab(label="Network"),
+                            ft.Tab(label="Appearance"),
+                            ft.Tab(label="About"),
+                        ]
+                    ),
+                    ft.TabBarView(
+                        expand=True,
+                        controls=[
+                            general_settings,
+                            download_settings,
+                            network_settings,
+                            gui_settings,
+                            about_section,
+                        ],
+                    ),
+                ],
+            ),
             expand=True,
+            on_change=self._on_tab_change,
         )
         
         return ft.Column(
@@ -56,6 +75,10 @@ class SettingsView:
             expand=True,
             spacing=20,
         )
+    
+    def _on_tab_change(self, e):
+        """Handle tab change"""
+        pass
     
     def _build_general_settings(self) -> ft.Container:
         """Build general settings tab"""
