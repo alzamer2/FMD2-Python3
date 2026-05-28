@@ -7,16 +7,21 @@ import flet as ft
 from typing import List, Dict, Optional
 
 
-class FavoritesView:
+class FavoritesView(ft.Column):
     """
     Favorites view showing tracked manga series
     """
     
     def __init__(self, app):
+        super().__init__()
         self.app = app
         self.favorites_list = None
     
-    def build(self) -> ft.Column:
+    def did_mount(self):
+        """Called after the control is mounted into the page tree"""
+        self._refresh_favorites()
+    
+    def build(self) -> 'FavoritesView':
         """Build the favorites UI"""
         # Header with actions
         header_row = ft.Row(
@@ -63,29 +68,30 @@ class FavoritesView:
             padding=10,
         )
         
-        # Create a container that will hold the favorites view and handle did_mount
-        self.container = ft.Container(
-            expand=True,
-            content=ft.Column(
-                controls=[
-                    header_row,
-                    ft.Row(controls=[self.filter_dropdown]),
-                    self.favorites_list,
-                ],
-                expand=True,
-            ),
-            on_mount=self._on_mount
-        )
+        # Create the main content column - set controls on self since we inherit from Column
+        self.controls = [
+            header_row,
+            ft.Row(controls=[self.filter_dropdown]),
+            self.favorites_list,
+        ]
+        self.expand = True
         
-        return self.container
+        return self
     
-    def _on_mount(self, e):
-        """Called when the control is mounted to the page"""
+    def refresh_if_needed(self):
+        """Refresh favorites list - call this after the view is added to page"""
         self._refresh_favorites()
     
     def _refresh_favorites(self):
         """Refresh favorites list from database"""
         if not self.app or not self.app.db_manager:
+            return
+        
+        # Check if the ListView is added to page
+        try:
+            _ = self.favorites_list.page
+        except RuntimeError:
+            # ListView not yet added to page, skip refresh
             return
         
         self.favorites_list.controls.clear()
@@ -103,7 +109,7 @@ class FavoritesView:
             self.favorites_list.controls.append(self._create_favorite_item(fav))
         
         # Update the page if available
-        page = self.container.page if hasattr(self, 'container') else None
+        page = self.page
         if page:
             page.update()
     
@@ -230,7 +236,7 @@ class FavoritesView:
     
     def _on_add_favorite(self, e):
         """Open dialog to add new favorite"""
-        page = self.container.page if hasattr(self, 'container') else None
+        page = self.page if hasattr(self, 'page') and self.page else None
         if not page:
             return
         
@@ -263,7 +269,7 @@ class FavoritesView:
     
     def _close_dialog(self):
         """Close current dialog"""
-        page = self.container.page if hasattr(self, 'container') else None
+        page = self.page if hasattr(self, 'page') and self.page else None
         if page and page.dialog:
             page.dialog.open = False
             page.dialog = None
@@ -289,7 +295,7 @@ class FavoritesView:
             self._refresh_favorites()
         else:
             # Show error
-            page = self.container.page if hasattr(self, 'container') else None
+            page = self.page if hasattr(self, 'page') and self.page else None
             if page:
                 page.snack_bar = ft.SnackBar(
                     content=ft.Text("Could not recognize this URL")

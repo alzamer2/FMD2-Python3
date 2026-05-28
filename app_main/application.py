@@ -267,13 +267,13 @@ class FMD2Application:
         self.initialize()
         
         if self.web_mode:
-            # Web mode - use ft.app with view=None and host/port parameters
+            # Web mode - use ft.app with FLET_APP_WEB for pure web server
             print(f"Starting web server at http://{self.host}:{self.port}")
             ft.app(
                 target=self.build_ui,
                 assets_dir=str(self.base_dir / 'assets'),
                 upload_dir=str(self.base_dir / 'uploads'),
-                view=ft.AppView.WEB_BROWSER,  # Force web browser view
+                view=ft.AppView.FLET_APP_WEB,  # Pure web server mode
                 host=self.host,
                 port=self.port,
             )
